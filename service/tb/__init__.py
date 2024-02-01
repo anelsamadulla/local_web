@@ -1,5 +1,6 @@
 import logging
 
+import jwt
 from tb_rest_client.rest_client_ce import *
 
 from tb_rest_client.rest import ApiException
@@ -11,55 +12,55 @@ logging.basicConfig(level=logging.DEBUG,
 
 
 # ThingsBoard REST API URL
-url = "http://localhost:8080"
+url = "http://localhost:80"
 
 # Default Tenant Administrator credentials
-username = "tenant@thingsboard.org"
-password = "tenant"
+username = "sysadmin@cuba.org"
+password = "sysadmin"
 
 
-def init():
+def init(data):
+    print(data)
+    data['protected_data'] = jwt.decode(data['jwt_token'], options={"verify_signature": False})
     with RestClientCE(base_url=url) as rest_client:
         try:
             rest_client.login(username=username, password=password)
             
-            rest_client.save_tenant_profile({
-                "name": "Default",
-                "description": "Default tenant profile",
-                "isolatedTbRuleEngine": False,
-                "profileData": {
-                    "configuration": {
-                    "type": "DEFAULT",
-                    "maxDevices": 0,
-                    "maxAssets": 0,
-                    "maxCustomers": 0,
-                    "maxUsers": 0,
-                    "maxDashboards": 0,
-                    "maxRuleChains": 0,
-                    "maxResourcesInBytes": 0,
-                    "maxOtaPackagesInBytes": 0,
-                    "transportTenantMsgRateLimit": "1000:1,20000:60",
-                    "transportTenantTelemetryMsgRateLimit": "1000:1,20000:60",
-                    "transportTenantTelemetryDataPointsRateLimit": "1000:1,20000:60",
-                    "transportDeviceMsgRateLimit": "20:1,600:60",
-                    "transportDeviceTelemetryMsgRateLimit": "20:1,600:60",
-                    "transportDeviceTelemetryDataPointsRateLimit": "20:1,600:60",
-                    "maxTransportMessages": 10000000,
-                    "maxTransportDataPoints": 10000000,
-                    "maxREExecutions": 4000000,
-                    "maxJSExecutions": 5000000,
-                    "maxDPStorageDays": 0,
-                    "maxRuleNodeExecutionsPerMessage": 50,
-                    "maxEmails": 0,
-                    "maxSms": 0,
-                    "maxCreatedAlarms": 1000,
-                    "defaultStorageTtlDays": 0,
-                    "alarmsTtlDays": 0,
-                    "rpcTtlDays": 0,
-                    "warnThreshold": 0
-                    }
-                }
-            })
+            tenant_profile = TenantProfile(name=f'Профайл {data["company"]}', 
+                        profile_data={
+                            'configuration': {
+                                "type": "DEFAULT",
+                                "maxDevices": data['protected_data']['devices'],
+                            }
+                        })
+            
+            tenant_profile = rest_client.save_tenant_profile(tenant_profile)
+            
+            tenant = Tenant(
+                title=data['company'],
+                region=data.get('region', 'Азия'),
+                tenant_profile_id=tenant_profile.id,
+                country=data.get('country', 'Казахстан'),
+                state=data.get('state', 'Астана'),
+                city=data.get('city', 'Астана'),
+                address=data.get('address', 'Адрес'),
+                zip=data.get('zip', '010000'),
+                email=data.get('email', 'email@email.com')
+            )
+            
+            tenant = rest_client.save_tenant(tenant)
+
+            user = User(
+                tenant_id=tenant.id,
+                email=data['issued_for'].get('email', 'tenantAdmin@gmail.com'),
+                authority='TENANT_ADMIN',
+                first_name=data['issued_for']['fname'],
+                last_name=data['issued_for']['lname'],
+                phone=data['issued_for'].get('phone', '77777777777'),
+                
+            )
+
+            rest_client.save_user(user, send_activation_mail=False)
 
 
         except ApiException as e:

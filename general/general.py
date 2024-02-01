@@ -5,6 +5,7 @@ from datetime import date
 import jwt
 from flask import Blueprint, redirect, render_template, request, url_for
 from config import basedir
+from service.tb import init
 
 
 general_bp = Blueprint(
@@ -44,6 +45,8 @@ def loadkey():
     if request.method == 'POST':
         f = request.files['generated_key']
         f.save(os.path.join(basedir, 'generated_key.json'))
+        with open('generated_key.json', 'r') as f:
+            init(json.load(f))
         return redirect(url_for('general_bp.index'))
 
     if request.method == 'GET':
