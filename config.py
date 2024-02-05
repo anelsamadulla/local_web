@@ -8,10 +8,11 @@ class Config(object):
     TESTING = False
     CSRF_ENABLED = True
     SECRET_KEY = 'this-really-needs-to-be-changed'
+    BASEDIR = os.path.abspath(os.path.dirname(__file__))
     # PG_DB = os.environ['PG_DB']
     # PG_USER = os.environ['PG_USER']
     # PG_PASS = os.environ['PG_PASSWORD']
-    # SQLALCHEMY_DATABASE_URI = os.environ['DATABASE_URL'].format(PG_USER, PG_PASS, PG_DB)
+    SQLALCHEMY_DATABASE_URI = os.environ['DATABASE_URL']
 
 
 class ProductionConfig(Config):

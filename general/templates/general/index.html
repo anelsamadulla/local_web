@@ -14,53 +14,38 @@
             <a href="{{ url_for('general_bp.loadkey') }}">Обновить ключ</a>
 
             <div class="flex">
-                <div id="personal-info-toggle" class="btn flex flex-center mr-1 rel" href="">
-                    <img style="width: 50px; height: 50px;" src="{{ url_for('static', filename='img/profile.png') }}" alt="Профиль">
-
-                    <div id="personal-info" class="hidden abs">
-                        <p>{{ issued_for['fname'] }}</p>
-                        <p>{{ issued_for['lname'] }}</p>
-                        {% if issued_for['patronym'] %}<p>{{ issued_for['patronym'] }}</p>{% endif %}
-                    </div>
-                </div>
-
-
                 <div class="flex column">
                     <p>Лицензия: {{ 'Аткивна' if license_status else 'Неактивна' }}</p>
                     {% if license_status %} <p>Истекает: {{ protected_data.expires_at | dateformat }}</p> {% endif %}
                 </div>
             </div>
-
-
-
-
         </div>
     </div>
 
     <div class="container">
         <form action="" class="form tenant-profile">
 
-            <h4>Имя профиля</h4>
+            <h4>{{ tenant_profile.name }}</h4>
 
             <div class="form-inputs">
                 <div>
                     <label for="max-devices">Макс. устройств</label>
-                    <input disabled id="max-devices" value="5000" type="number">
+                    <input disabled id="max-devices" value="{{ tenant_profile.profile_data.configuration.maxDevices }}" type="number">
                 </div>
 
                 <div>
                     <label for="max-assets">Макс. активов</label>
-                    <input disabled id="max-assets" value="5000" type="number">
+                    <input disabled id="max-assets" value="{{ tenant_profile.profile_data.configuration.maxAssets }}" type="number">
                 </div>
 
                 <div>
                     <label for="max-customers">Макс. клиентов</label>
-                    <input disabled id="max-customers" value="100" type="number">
+                    <input disabled id="max-customers" value="{{ tenant_profile.profile_data.configuration.maxCustomers }}" type="number">
                 </div>
 
                 <div>
                     <label for="max-users">Макс. пользователей</label>
-                    <input disabled id="max-users" value="500" type="number">
+                    <input disabled id="max-users" value="{{ tenant_profile.profile_data.configuration.maxUsers }}" type="number">
                 </div>
             </div>
         </form>
@@ -69,52 +54,52 @@
     <div class="container">
         <form action="" class="form tenant">
 
-            <h4>Наименование компании</h4>
+            <h4>{{ tenant.name }}</h4>
 
             <div class="form-inputs">
                 <div>
                     <label for="region">Регион</label>
-                    <input id="region" value="Средняя Азия" type="text">
+                    <input id="region" value="{{ tenant.refion | or_blank }}" type="text">
                 </div>
 
                 <div>
                     <label for="country">Страна</label>
-                    <input id="country" value="Казахстан" type="text">
+                    <input id="country" value="{{ tenant.country | or_blank }}" type="text">
                 </div>
 
                 <div>
                     <label for="state">Область/Штат/Земля</label>
-                    <input id="state" value="Астана" type="text">
+                    <input id="state" value="{{ tenant.state | or_blank }}" type="text">
                 </div>
 
                 <div>
                     <label for="city">Город</label>
-                    <input id="city" value="Астана" type="text">
+                    <input id="city" value="{{ tenant.city | or_blank }}" type="text">
                 </div>
 
                 <div>
                     <label for="address">Адрес</label>
-                    <input id="address" value="500" type="text">
+                    <input id="address" value="{{ tenant.address | or_blank }}" type="text">
                 </div>
 
                 <div>
                     <label for="address2">Адрес 2</label>
-                    <input id="address2" value="500" type="text">
+                    <input id="address2" value="{{ tenant.address2 | or_blank }}" type="text">
                 </div>
 
                 <div>
                     <label for="zip">Почтовый индекс</label>
-                    <input id="zip" value="010000" type="text">
+                    <input id="zip" value="{{ tenant.zip | or_blank }}" type="text">
                 </div>
 
                 <div>
                     <label for="phone">Номер телефона</label>
-                    <input id="phone" value="500" type="text">
+                    <input id="phone" value="{{ tenant.phone | or_blank }}" type="text">
                 </div>
 
                 <div>
                     <label for="email">Электронная почта</label>
-                    <input id="email" value="500" type="text">
+                    <input id="email" value="{{ tenant.email | or_blank }}" type="text">
                 </div>
 
                 <div>
@@ -125,41 +110,44 @@
     </div>
 
     <div class="container">
+
+        {% for tenant_admin in admins %}
         <form action="" class="form tenant-admin">
 
-            <h4>Администратор</h4>
+            <h4>Администратор владельца{% if tenant_admin.activation_url %}<b> Не активирован</b>{% endif %}</h4>
+            {% if tenant_admin.activation_url %}
+                <a class="activation-link center" href="{{ tenant_admin.activation_url }}" target="_blank">Активировать</a>
+            {% endif %}
 
             <div class="form-inputs">
                 <div>
                     <label for="first-name">Имя</label>
-                    <input disabled id="first-name" value="Имя" type="text">
+                    <input disabled id="first-name" value="{{ tenant_admin.first_name | or_blank }}" type="text">
                 </div>
 
                 <div>
                     <label for="last-name">Фамилия</label>
-                    <input disabled id="last-name" value="Фамилия" type="text">
+                    <input disabled id="last-name" value="{{ tenant_admin.last_name | or_blank }}" type="text">
                 </div>
 
                 <div>
                     <label for="phone">Номер телефона</label>
-                    <input id="phone" value="500" type="text">
+                    <input id="phone" value="{{ tenant_admin.phone | or_blank }}" type="text">
                 </div>
 
                 <div>
                     <label for="email">Электронная почта</label>
-                    <input id="email" value="500" type="text">
+                    <input id="email" value="{{ tenant_admin.email | or_blank }}" type="text">
                 </div>
             </div>
         </form>
+        {% endfor %}
     </div>
 
-        {{ created_at | pprint }}
-        <br>
-     {{ protected_data | pprint }}
-     <br>
-     {{ protected_data.services | random }}
+    
 
     <!-- <div id="key-exists" data-keyExists="{{ key_exists }}" style="display: none;"></div> -->
-    <script src="{{ url_for('general_bp.static', filename='modal.mjs') }}"></script>
+    <!-- <script src="{{ url_for('general_bp.static', filename='modal.mjs') }}"></script> -->
+    <script src="{{ url_for('general_bp.static', filename='openActivationTab.mjs') }}"></script>
 </body>
 </html>

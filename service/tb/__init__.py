@@ -60,9 +60,9 @@ def init(data):
                 
             )
 
-            rest_client.save_user(user, send_activation_mail=False)
-
+            user = rest_client.save_user(user, send_activation_mail=False)
+            
+            return tenant_profile, tenant, user
 
         except ApiException as e:
             logging.exception(e)
-
