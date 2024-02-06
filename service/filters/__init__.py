@@ -1,3 +1,6 @@
+"""
+Custom Jinja2 filters will be written here.
+""" 
 from datetime import date
 
 

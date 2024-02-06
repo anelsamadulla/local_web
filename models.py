@@ -1,3 +1,6 @@
+"""
+SQLAlchemy Models of the app.
+"""
 from sqlalchemy.orm import mapped_column, Mapped
 
 from database import db

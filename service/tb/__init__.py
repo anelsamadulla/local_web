@@ -1,3 +1,6 @@
+"""
+Module for Cuba API.
+"""
 import logging
 
 import jwt

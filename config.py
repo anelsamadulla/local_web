@@ -1,3 +1,6 @@
+"""
+Config file of the app.
+"""
 import os
 basedir = os.path.abspath(os.path.dirname(__file__))
 # postgresql://[user[:password]@][netloc][:port][/dbname][?param1=value1&...]

@@ -1,3 +1,6 @@
+"""
+Misc. helping functions.
+"""
 from app import app
 
 
