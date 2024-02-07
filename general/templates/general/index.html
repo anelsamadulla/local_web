@@ -51,59 +51,58 @@
         </form>
     </div>
 
-    <div class="container">
-        <form action="" class="form tenant">
-
+    <div class='container'>
+        <form action="{{ url_for('general_bp.post_tenant') }}" method="POST" class="form tenant">
+            {{ tenant_form.csrf_token }}
             <h4>{{ tenant.name }}</h4>
 
             <div class="form-inputs">
+
                 <div>
-                    <label for="region">Регион</label>
-                    <input id="region" value="{{ tenant.refion | or_blank }}" type="text">
+                    {{ tenant_form.country.label }}
+                    {{ tenant_form.country(value=tenant.country | or_blank) }}
                 </div>
 
                 <div>
-                    <label for="country">Страна</label>
-                    <input id="country" value="{{ tenant.country | or_blank }}" type="text">
+                    {{ tenant_form.state.label }}
+                    {{ tenant_form.state(value=tenant.state | or_blank) }}
                 </div>
 
                 <div>
-                    <label for="state">Область/Штат/Земля</label>
-                    <input id="state" value="{{ tenant.state | or_blank }}" type="text">
+                    {{ tenant_form.city.label }}
+                    {{ tenant_form.city(value=tenant.city | or_blank) }}
                 </div>
 
                 <div>
-                    <label for="city">Город</label>
-                    <input id="city" value="{{ tenant.city | or_blank }}" type="text">
+                    {{ tenant_form.zip_code.label }}
+                    {{ tenant_form.zip_code(value=tenant.zip | or_blank) }}
                 </div>
 
                 <div>
-                    <label for="address">Адрес</label>
-                    <input id="address" value="{{ tenant.address | or_blank }}" type="text">
+                    {{ tenant_form.address.label }}
+                    {{ tenant_form.address(value=tenant.address | or_blank) }}
                 </div>
 
                 <div>
-                    <label for="address2">Адрес 2</label>
-                    <input id="address2" value="{{ tenant.address2 | or_blank }}" type="text">
+                    {{ tenant_form.address2.label }}
+                    {{ tenant_form.address2(value=tenant.address2 | or_blank) }}
                 </div>
 
                 <div>
-                    <label for="zip">Почтовый индекс</label>
-                    <input id="zip" value="{{ tenant.zip | or_blank }}" type="text">
+                    {{ tenant_form.phone.label }}
+                    {{ tenant_form.phone(value=tenant.phone | or_blank) }}
                 </div>
 
                 <div>
-                    <label for="phone">Номер телефона</label>
-                    <input id="phone" value="{{ tenant.phone | or_blank }}" type="text">
+                    {{ tenant_form.email.label }}
+                    {{ tenant_form.email(value=tenant.email | or_blank) }}
                 </div>
 
-                <div>
-                    <label for="email">Электронная почта</label>
-                    <input id="email" value="{{ tenant.email | or_blank }}" type="text">
-                </div>
+                {{ tenant_form.tenant_id(value=tenant.id.id)}} 
+                {{ tenant_form.title(value=tenant.title) }}
 
                 <div>
-                    <input type="submit" value="Обновить">
+                    {{ tenant_form.submit }}
                 </div>
             </div>
         </form>
@@ -112,7 +111,7 @@
     <div class="container">
 
         {% for tenant_admin in admins %}
-        <form action="" class="form tenant-admin">
+        <form action="{{ url_for('general_bp.post_admin') }}" method="POST" class="form tenant-admin">
 
             <h4>Администратор владельца{% if tenant_admin.activation_url %}<b> Не активирован</b>{% endif %}</h4>
             {% if tenant_admin.activation_url %}
@@ -120,24 +119,32 @@
             {% endif %}
 
             <div class="form-inputs">
+                {{ tenant_admin.admin_form.csrf_token }}
+                
                 <div>
-                    <label for="first-name">Имя</label>
-                    <input disabled id="first-name" value="{{ tenant_admin.first_name | or_blank }}" type="text">
+                    {{ tenant_admin.admin_form.first_name.label }}
+                    {{ tenant_admin.admin_form.first_name(value=tenant_admin.first_name | or_blank) }}
                 </div>
 
                 <div>
-                    <label for="last-name">Фамилия</label>
-                    <input disabled id="last-name" value="{{ tenant_admin.last_name | or_blank }}" type="text">
+                    {{ tenant_admin.admin_form.last_name.label }}
+                    {{ tenant_admin.admin_form.last_name(value=tenant_admin.last_name | or_blank) }}
                 </div>
 
                 <div>
-                    <label for="phone">Номер телефона</label>
-                    <input id="phone" value="{{ tenant_admin.phone | or_blank }}" type="text">
+                    {{ tenant_admin.admin_form.phone.label }}
+                    {{ tenant_admin.admin_form.phone(value=tenant_admin.phone | or_blank, disabled=True) }}
                 </div>
 
                 <div>
-                    <label for="email">Электронная почта</label>
-                    <input id="email" value="{{ tenant_admin.email | or_blank }}" type="text">
+                    {{ tenant_admin.admin_form.email.label }}
+                    {{ tenant_admin.admin_form.email(value=tenant_admin.email | or_blank, disabled=True) }}
+                </div>
+
+                {{ tenant_admin.admin_form.admin_id(value=tenant_admin.id.id) }}
+
+                <div>
+                    {{ tenant_admin.admin_form.submit }}
                 </div>
             </div>
         </form>

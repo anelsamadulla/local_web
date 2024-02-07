@@ -9,12 +9,14 @@ import pathlib
 import jwt
 from flask import Blueprint, redirect, render_template, request, url_for
 from service.tb import init
-from service.tb.user import get_user_activation_link, get_user
+from service.tb.user import get_user_activation_link, get_user, update_user
 from service.tb.tenant_profile import get_tenant_profile
-from service.tb.tenant import get_tenant
+from service.tb.tenant import get_tenant, update_tenant
 from models import TenantProfile, Tenant, TenantAdmin
 from database import db
 from exceptions import UserActivatedException
+from general.forms import tenant_form
+from general.forms import tenant_admin_form
 
 
 basedir = pathlib.Path(__file__).parent.parent.resolve()
@@ -31,6 +33,7 @@ general_bp = Blueprint(
 
 @general_bp.route('/', methods=['GET'])
 def index():
+    # Handle GET request
     if request.method == 'GET':
         data = {}
 
@@ -54,28 +57,56 @@ def index():
         data['admins'] = []
         for admin in admins:
             user = get_user(admin.id)
+            user.admin_form = tenant_admin_form.TenantAdminForm()
             try:
                 user.activation_url = get_user_activation_link(admin.id)[2:-1]
             except UserActivatedException:
                 pass
             data['admins'].append(user)
-        print(data['admins'])
-            
+        # print(data['admins'])
+        
+        # Add miscellaneous data in context    
+        data['tenant_form'] = tenant_form.TenantForm()
         data['protected_data'] = jwt.decode(key['jwt_token'], options={"verify_signature": False})
         data['license_status'] = date.today() < date.fromtimestamp(data['protected_data']['expires_at'])
 
         return render_template('general/index.html', **data)
 
 
+@general_bp.route('/update_tenant', methods=['POST'])
+def post_tenant():
+    # Update tenant
+    form = tenant_form.TenantForm()
+
+    if form.validate_on_submit():
+        update_tenant(tenant_id=form.data.pop('tenant_id'), data=form.data)
+             
+    return redirect(url_for('general_bp.index'))
+
+
+@general_bp.route('/update_admin', methods=['POST'])
+def post_admin():
+    # Update tenant admin
+    form = tenant_admin_form.TenantAdminForm()
+    
+    if form.validate_on_submit():
+        update_user(user_id=form.data.pop('admin_id'), data=form.data)
+
+    return redirect(url_for('general_bp.index'))
+
+
 @general_bp.route('/loadkey', methods=['GET', 'POST'])
 def loadkey():
     if request.method == 'POST':
+        # There should be a generated_key file in POST request
         f = request.files['generated_key']
         f.save(os.path.join(basedir, 'generated_key.json'))
 
         with open('generated_key.json', 'r') as f:
+            # Initiate Cuba with the key 
             tenant_profile, tenant, tenant_admin = init(json.load(f))
 
+            # Save models IDs after initialization
             tenant_profile_model = TenantProfile(id=tenant_profile.id.id)
             tenant_model = Tenant(id=tenant.id.id)
             tenant_admin_model = TenantAdmin(id=tenant_admin.id.id)
