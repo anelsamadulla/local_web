@@ -10,102 +10,102 @@
 </head>
 <body>
 
+    <div class="container">
+        <div class="nav">
+            <a class="nav-link" href="#">Обновить ключ</a>
+        </div>
 
-
-    <div class="header">
-        <div class="container">
-            <a href="{{ url_for('general_bp.loadkey') }}">Обновить ключ</a>
-
-            <div class="flex">
-                <div class="flex column">
-                    <p>Лицензия: {{ 'Аткивна' if license_status else 'Неактивна' }}</p>
-                    {% if license_status %} <p>Истекает: {{ protected_data.expires_at | dateformat }}</p> {% endif %}
-                </div>
+        <div class="flex">
+            <div class="flex column">
+                <p>Лицензия: {{ 'Аткивна' if license_status else 'Неактивна' }}</p>
+                {% if license_status %} <p>Истекает: {{ protected_data.expires_at | dateformat }}</p> {% endif %}
             </div>
         </div>
     </div>
 
     <div class="container">
-        <form action="" class="form tenant-profile">
+        <form action="" class="form tenant-profile card">
+
+            
 
             <h4>{{ tenant_profile.name }}</h4>
 
             <div class="form-inputs">
                 <div>
-                    <label for="max-devices">Макс. устройств</label>
-                    <input disabled id="max-devices" value="{{ tenant_profile.profile_data.configuration.maxDevices }}" type="number">
+                    <label class="form-label" for="max-devices">Макс. устройств</label>
+                    <input disabled class="form-control" id="max-devices" value="{{ tenant_profile.profile_data.configuration.maxDevices }}" type="number">
                 </div>
 
                 <div>
-                    <label for="max-assets">Макс. активов</label>
-                    <input disabled id="max-assets" value="{{ tenant_profile.profile_data.configuration.maxAssets }}" type="number">
+                    <label class="form-label" for="max-assets">Макс. активов</label>
+                    <input disabled class="form-control" id="max-assets" value="{{ tenant_profile.profile_data.configuration.maxAssets }}" type="number">
                 </div>
 
                 <div>
-                    <label for="max-customers">Макс. клиентов</label>
-                    <input disabled id="max-customers" value="{{ tenant_profile.profile_data.configuration.maxCustomers }}" type="number">
+                    <label class="form-label" for="max-customers">Макс. клиентов</label>
+                    <input disabled class="form-control" id="max-customers" value="{{ tenant_profile.profile_data.configuration.maxCustomers }}" type="number">
                 </div>
 
                 <div>
-                    <label for="max-users">Макс. пользователей</label>
-                    <input disabled id="max-users" value="{{ tenant_profile.profile_data.configuration.maxUsers }}" type="number">
+                    <label class="form-label" for="max-users">Макс. пользователей</label>
+                    <input disabled class="form-control" id="max-users" value="{{ tenant_profile.profile_data.configuration.maxUsers }}" type="number">
                 </div>
             </div>
         </form>
     </div>
 
     <div class='container'>
-        <form action="{{ url_for('general_bp.post_tenant') }}" method="POST" class="form tenant">
+        <form action="{{ url_for('general_bp.post_tenant') }}" method="POST" class="form tenant card">
             {{ tenant_form.csrf_token }}
             <h4>{{ tenant.name }}</h4>
 
             <div class="form-inputs">
 
                 <div>
-                    {{ tenant_form.country.label }}
-                    {{ tenant_form.country(value=tenant.country | or_blank) }}
+                    {{ tenant_form.country.label(class="form-label") }}
+                    {{ tenant_form.country(value=tenant.country | or_blank, class="form-control") }}
                 </div>
 
                 <div>
-                    {{ tenant_form.state.label }}
-                    {{ tenant_form.state(value=tenant.state | or_blank) }}
+                    {{ tenant_form.state.label(class="form-label") }}
+                    {{ tenant_form.state(value=tenant.state | or_blank, class="form-control") }}
                 </div>
 
                 <div>
-                    {{ tenant_form.city.label }}
-                    {{ tenant_form.city(value=tenant.city | or_blank) }}
+                    {{ tenant_form.city.label(class="form-label") }}
+                    {{ tenant_form.city(value=tenant.city | or_blank, class="form-control") }}
                 </div>
 
                 <div>
-                    {{ tenant_form.zip_code.label }}
-                    {{ tenant_form.zip_code(value=tenant.zip | or_blank) }}
+                    {{ tenant_form.zip_code.label(class="form-label") }}
+                    {{ tenant_form.zip_code(value=tenant.zip | or_blank, class="form-control") }}
                 </div>
 
                 <div>
-                    {{ tenant_form.address.label }}
-                    {{ tenant_form.address(value=tenant.address | or_blank) }}
+                    {{ tenant_form.address.label(class="form-label") }}
+                    {{ tenant_form.address(value=tenant.address | or_blank, class="form-control") }}
                 </div>
 
                 <div>
-                    {{ tenant_form.address2.label }}
-                    {{ tenant_form.address2(value=tenant.address2 | or_blank) }}
+                    {{ tenant_form.address2.label(class="form-label") }}
+                    {{ tenant_form.address2(value=tenant.address2 | or_blank, class="form-control") }}
                 </div>
 
                 <div>
-                    {{ tenant_form.phone.label }}
-                    {{ tenant_form.phone(value=tenant.phone | or_blank) }}
+                    {{ tenant_form.phone.label(class="form-label") }}
+                    {{ tenant_form.phone(value=tenant.phone | or_blank, class="form-control") }}
                 </div>
 
                 <div>
-                    {{ tenant_form.email.label }}
-                    {{ tenant_form.email(value=tenant.email | or_blank) }}
+                    {{ tenant_form.email.label(class="form-label") }}
+                    {{ tenant_form.email(value=tenant.email | or_blank, class="form-control") }}
                 </div>
 
                 {{ tenant_form.tenant_id(value=tenant.id.id)}} 
                 {{ tenant_form.title(value=tenant.title) }}
 
                 <div>
-                    {{ tenant_form.submit }}
+                    {{ tenant_form.submit(class="btn btn-primary") }}
                 </div>
             </div>
         </form>
@@ -114,7 +114,7 @@
     <div class="container">
 
         {% for tenant_admin in admins %}
-        <form action="{{ url_for('general_bp.post_admin') }}" method="POST" class="form tenant-admin">
+        <form action="{{ url_for('general_bp.post_admin') }}" method="POST" class="form tenant-admin card">
 
             <h4>Администратор владельца{% if tenant_admin.activation_url %}<b> Не активирован</b>{% endif %}</h4>
             {% if tenant_admin.activation_url %}
@@ -125,29 +125,29 @@
                 {{ tenant_admin.admin_form.csrf_token }}
                 
                 <div>
-                    {{ tenant_admin.admin_form.first_name.label }}
-                    {{ tenant_admin.admin_form.first_name(value=tenant_admin.first_name | or_blank) }}
+                    {{ tenant_admin.admin_form.first_name.label(class="form-label") }}
+                    {{ tenant_admin.admin_form.first_name(value=tenant_admin.first_name | or_blank, class="form-control") }}
                 </div>
 
                 <div>
-                    {{ tenant_admin.admin_form.last_name.label }}
-                    {{ tenant_admin.admin_form.last_name(value=tenant_admin.last_name | or_blank) }}
+                    {{ tenant_admin.admin_form.last_name.label(class="form-label") }}
+                    {{ tenant_admin.admin_form.last_name(value=tenant_admin.last_name | or_blank, class="form-control") }}
                 </div>
 
                 <div>
-                    {{ tenant_admin.admin_form.phone.label }}
-                    {{ tenant_admin.admin_form.phone(value=tenant_admin.phone | or_blank, disabled=True) }}
+                    {{ tenant_admin.admin_form.phone.label(class="form-label") }}
+                    {{ tenant_admin.admin_form.phone(value=tenant_admin.phone | or_blank, disabled=True, class="form-control") }}
                 </div>
 
                 <div>
-                    {{ tenant_admin.admin_form.email.label }}
-                    {{ tenant_admin.admin_form.email(value=tenant_admin.email | or_blank, disabled=True) }}
+                    {{ tenant_admin.admin_form.email.label(class="form-label") }}
+                    {{ tenant_admin.admin_form.email(value=tenant_admin.email | or_blank, disabled=True, class="form-control") }}
                 </div>
 
                 {{ tenant_admin.admin_form.admin_id(value=tenant_admin.id.id) }}
 
                 <div>
-                    {{ tenant_admin.admin_form.submit }}
+                    {{ tenant_admin.admin_form.submit(class="btn btn-primary") }}
                 </div>
             </div>
         </form>
