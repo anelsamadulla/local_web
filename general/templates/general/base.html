@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    {% block head %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+    <title>{% block title %}{% endblock %} - Cuba local</title>
+    {% endblock %}
+  </head>
+  <body>
+    <div class="container">
+        <div class="nav">
+            <a class="nav-link" href="{{ url_for('general_bp.loadkey') }}">Обновить ключ</a>
+        </div>
+
+        <div class="flex gap-4 flex-center">
+
+            <!-- Render proper nav image for current page -->
+            {% if request.endpoint == 'general_bp.index' %}
+            <a href="{{ url_for('general_bp.admins') }}">
+                <img style="width: 50px; height: 50px;" src="{{ url_for('static', filename='img/profile.png') }}" alt="Администраторы">
+            </a>
+            {% elif request.endpoint == 'general_bp.admins' %}
+                <a href="{{ url_for('general_bp.index') }}">
+                    <img style="width: 50px; height: 50px;" src="{{ url_for('static', filename='img/home.png') }}" alt="Главная">
+                </a>
+            {% endif %}
+
+
+            <div class="flex column">
+                <p>Лицензия: {{ 'Аткивна' if license_status else 'Неактивна' }}</p>
+                {% if license_status %} <p>Истекает: {{ protected_data.expires_at | dateformat }}</p> {% endif %}
+            </div>
+
+        </div>
+    </div>
+    <div id="content">{% block content %}{% endblock %}</div>
+    <div id="footer">
+      {% block footer %}
+      
+      {% endblock %}
+    </div>
+  </body>
+</html>

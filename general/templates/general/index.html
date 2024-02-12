@@ -1,41 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-</head>
-<body>
-
-    <div class="container">
-        <div class="nav">
-            <a class="nav-link" href="#">Обновить ключ</a>
-        </div>
-
-        <div class="flex gap-4 flex-center">
-
-            <!-- Render proper nav image for current page -->
-            {% if request.endpoint == 'general_bp.index' %}
-            <a href="{{ url_for('general_bp.admins') }}">
-                <img style="width: 50px; height: 50px;" src="{{ url_for('static', filename='img/profile.png') }}" alt="Администраторы">
-            </a>
-            {% elif request.endpoint == 'general_bp.admins' %}
-                <a href="{{ url_for('general_bp.index') }}">
-                    <img style="width: 50px; height: 50px;" src="{{ url_for('static', filename='img/home.png') }}" alt="Главная">
-                </a>
-            {% endif %}
-
-
-            <div class="flex column">
-                <p>Лицензия: {{ 'Аткивна' if license_status else 'Неактивна' }}</p>
-                {% if license_status %} <p>Истекает: {{ protected_data.expires_at | dateformat }}</p> {% endif %}
-            </div>
-
-        </div>
-    </div>
+{% extends "general/base.html" %}
+{% block title %}{{ tenant.name }}{% endblock %}
+{% block content %}
 
     <div class="container">
         <form action="" class="form tenant-profile card">
@@ -173,5 +138,4 @@
     <!-- <div id="key-exists" data-keyExists="{{ key_exists }}" style="display: none;"></div> -->
     <!-- <script src="{{ url_for('general_bp.static', filename='modal.mjs') }}"></script> -->
     <script src="{{ url_for('general_bp.static', filename='openActivationTab.mjs') }}"></script>
-</body>
-</html>
+{% endblock %}
