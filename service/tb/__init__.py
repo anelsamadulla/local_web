@@ -18,7 +18,7 @@ logging.basicConfig(level=logging.DEBUG,
 url = "http://localhost:80"
 
 # Default Tenant Administrator credentials
-username = "sysadmin@cuba.org"
+username = "sysadmin@thingsboard.org"
 password = "sysadmin"
 
 
