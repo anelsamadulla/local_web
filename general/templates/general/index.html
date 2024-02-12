@@ -91,51 +91,20 @@
     </div>
 
     <div class="container">
-
         {% for tenant_admin in admins %}
-        <form action="{{ url_for('general_bp.post_admin') }}" method="POST" class="form tenant-admin card">
-
-            <h4>Администратор владельца{% if tenant_admin.activation_url %}<b> Не активирован</b>{% endif %}</h4>
             {% if tenant_admin.activation_url %}
-                <a class="activation-link center" href="{{ tenant_admin.activation_url }}" target="_blank">Активировать</a>
+            <a data-name="{{ tenant_admin.first_name }} {{ tenant_admin.last_name }}"
+               data-openTab="{{ open_tab }}"
+               class="activation-link hidden" 
+               href="{{ tenant_admin.activation_url }}" 
+               target="_blank"
+            ></a>
             {% endif %}
-
-            <div class="form-inputs">
-                {{ tenant_admin.admin_form.csrf_token }}
-                
-                <div>
-                    {{ tenant_admin.admin_form.first_name.label(class="form-label") }}
-                    {{ tenant_admin.admin_form.first_name(value=tenant_admin.first_name | or_blank, class="form-control") }}
-                </div>
-
-                <div>
-                    {{ tenant_admin.admin_form.last_name.label(class="form-label") }}
-                    {{ tenant_admin.admin_form.last_name(value=tenant_admin.last_name | or_blank, class="form-control") }}
-                </div>
-
-                <div>
-                    {{ tenant_admin.admin_form.phone.label(class="form-label") }}
-                    {{ tenant_admin.admin_form.phone(value=tenant_admin.phone | or_blank, disabled=True, class="form-control") }}
-                </div>
-
-                <div>
-                    {{ tenant_admin.admin_form.email.label(class="form-label") }}
-                    {{ tenant_admin.admin_form.email(value=tenant_admin.email | or_blank, disabled=True, class="form-control") }}
-                </div>
-
-                {{ tenant_admin.admin_form.admin_id(value=tenant_admin.id.id) }}
-
-                <div>
-                    {{ tenant_admin.admin_form.submit(class="btn btn-primary") }}
-                </div>
-            </div>
-        </form>
         {% endfor %}
     </div>
-
     
-
-    <!-- <div id="key-exists" data-keyExists="{{ key_exists }}" style="display: none;"></div> -->
-    <!-- <script src="{{ url_for('general_bp.static', filename='modal.mjs') }}"></script> -->
-    <script src="{{ url_for('general_bp.static', filename='openActivationTab.mjs') }}"></script>
 {% endblock %}
+{% block endscripts %}
+    <script src="{{ url_for('general_bp.static', filename='activateAdminNotification.mjs') }}"></script>
+{% endblock%}
+

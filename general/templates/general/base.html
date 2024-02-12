@@ -19,7 +19,7 @@
 
             <!-- Render proper nav image for current page -->
             {% if request.endpoint == 'general_bp.index' %}
-            <a href="{{ url_for('general_bp.admins') }}">
+            <a href="{{ url_for('general_bp.admins', page=1) }}">
                 <img style="width: 50px; height: 50px;" src="{{ url_for('static', filename='img/profile.png') }}" alt="Администраторы">
             </a>
             {% elif request.endpoint == 'general_bp.admins' %}
@@ -37,10 +37,15 @@
         </div>
     </div>
     <div id="content">{% block content %}{% endblock %}</div>
+
+    <div class="toast-container p-3 bottom-0 end-0"></div> 
+    
     <div id="footer">
       {% block footer %}
       
       {% endblock %}
     </div>
+    <script src="{{url_for('static', filename='js/bootstrap.min.js')}}"></script>
+    {% block endscripts %}{% endblock %}
   </body>
 </html>

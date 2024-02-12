@@ -77,14 +77,14 @@ body {
 form {
     padding: 2rem;
     border: 1px dotted black;
-    max-width: 800px;
+    max-width: 1000px;
     display: flex;
     flex-direction: column;
     align-items: center;
 }
 
 form h4 {
-    margin: 1rem auto 0;
+    margin: 1rem auto 1rem;
     text-align: center;
     width: 400px;
 }
