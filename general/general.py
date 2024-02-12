@@ -52,17 +52,6 @@ def index():
         tenant = db.session.scalar(db.select(Tenant))
         data['tenant'] = get_tenant(str(tenant.id))
             
-        # Get all admin ids and fetch all admins data and corresponding activation links from Cuba
-        admins = db.session.scalars(db.select(TenantAdmin)).all()
-        data['admins'] = []
-        for admin in admins:
-            user = get_user(admin.id)
-            user.admin_form = tenant_admin_form.TenantAdminForm()
-            try:
-                user.activation_url = get_user_activation_link(admin.id)[2:-1]
-            except UserActivatedException:
-                pass
-            data['admins'].append(user)
         # print(data['admins'])
         
         # Add miscellaneous data in context    
@@ -71,6 +60,37 @@ def index():
         data['license_status'] = date.today() < date.fromtimestamp(data['protected_data']['expires_at'])
 
         return render_template('general/index.html', **data)
+    
+    
+@general_bp.route('/admins', methods=['GET'])
+def admins():
+    data = {}
+
+    # Get the key file and redirect if does not exist
+    filepath = os.path.join(basedir, 'generated_key.json')
+    if not os.path.exists(filepath):
+        return redirect(url_for('general_bp.loadkey'))
+    
+    key = json.load(open(filepath))
+    
+    # Get all admin ids and fetch all admins data and corresponding activation links from Cuba
+    admins = db.session.scalars(db.select(TenantAdmin)).all()
+    data['admins'] = []
+    for admin in admins:
+        user = get_user(admin.id)
+        user.admin_form = tenant_admin_form.TenantAdminForm()
+        try:
+            user.activation_url = get_user_activation_link(admin.id)[2:-1]
+        except UserActivatedException:
+            pass
+        data['admins'].append(user)
+        
+    # Add miscellaneous data in context    
+    data['tenant_form'] = tenant_form.TenantForm()
+    data['protected_data'] = jwt.decode(key['jwt_token'], options={"verify_signature": False})
+    data['license_status'] = date.today() < date.fromtimestamp(data['protected_data']['expires_at'])
+
+    return render_template('general/admins.html', **data)
 
 
 @general_bp.route('/update_tenant', methods=['POST'])
