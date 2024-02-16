@@ -4,7 +4,6 @@
 
     <div class="container column">
 
-        
         {% for tenant_admin in admins %}
             <div class="container">
                 <form action="{{ url_for('general_bp.post_admin') }}" method="POST" class="form tenant-admin card">
@@ -37,7 +36,14 @@
                             {{ tenant_admin.admin_form.email(value=tenant_admin.email | or_blank, disabled=True, class="form-control") }}
                         </div>
 
-                        {{ tenant_admin.admin_form.admin_id(value=tenant_admin.id.id) }}
+                        <div>
+                            <!-- Label for the password field -->
+                            {{ tenant_admin.admin_form.admin_password.label(class="form-label", style="display: none") }}
+                        
+                            <!-- Hidden password field (disabled) -->
+                            {{ tenant_admin.admin_form.admin_password(value="", disabled=True, class="form-control", style="display: none") }}
+                        </div>
+                        
 
                         <div>
                             {{ tenant_admin.admin_form.submit(class="btn btn-primary") }}

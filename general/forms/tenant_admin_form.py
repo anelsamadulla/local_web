@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, EmailField, SubmitField, HiddenField
+from wtforms import StringField, EmailField, SubmitField, HiddenField, PasswordField
 from wtforms.validators import DataRequired
 
 
@@ -9,4 +9,5 @@ class TenantAdminForm(FlaskForm):
     phone = StringField('Номер телефона')
     email = StringField('Электронная почта')
     admin_id = HiddenField()
+    admin_password = PasswordField('Новый пароль') 
     submit = SubmitField('Обновить')

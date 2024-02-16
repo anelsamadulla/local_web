@@ -2,13 +2,12 @@
 Main blueprint.
 """
 import os
-import json
+import json, jsonify 
 from datetime import date
 import pathlib
-
 import jwt
 from flask import Blueprint, redirect, render_template, request, url_for
-from service.tb import init
+from service.tb import init, init_dashboard
 from service.tb.user import get_user_activation_link, update_user
 from service.tb.tenant_profile import get_tenant_profile
 from service.tb.tenant import get_tenant, update_tenant, get_tenant_admins_by_tenant_id
@@ -17,10 +16,11 @@ from database import db
 from exceptions import UserActivatedException
 from general.forms import tenant_form
 from general.forms import tenant_admin_form
-
+from service.tb import url
+import requests
+from requests.exceptions import RequestException
 
 basedir = pathlib.Path(__file__).parent.parent.resolve()
-
 
 general_bp = Blueprint(
     'general_bp',
@@ -29,7 +29,6 @@ general_bp = Blueprint(
     static_folder='static',
     static_url_path='/assets'
 )
-
 
 @general_bp.route('/', methods=['GET'])
 def index(open_tab=False):
@@ -70,7 +69,6 @@ def index(open_tab=False):
 
         return render_template('general/index.html', **data)
 
-
 @general_bp.route('/admins/<int:page>', methods=['GET'])
 def admins(page):
     data = {}
@@ -104,6 +102,19 @@ def admins(page):
 
     return render_template('general/admins.html', **data)
 
+# Route to handle activation and initialization
+@general_bp.route('/activate_admin', methods=['POST'])
+def activate_admin():
+    data = request.json
+    admin_id = data.get('admin_id')
+    email = data.get('email')  # Retrieve email from request payload
+    new_password = data.get('new_password')
+    
+    # Call init_dashboard with email, admin_id, and new_password
+    init_dashboard(email, new_password)
+
+    return jsonify({'message': 'Admin activated and dashboard initialized successfully'})
+
 
 @general_bp.route('/update_tenant', methods=['POST'])
 def post_tenant():
@@ -136,8 +147,7 @@ def loadkey():
 
         with open('generated_key.json', 'r') as f:
             # Initiate Cuba with the key
-            tenant_profile, tenant, tenant_admin = init(json.load(f))
-
+            tenant_profile, tenant, tenant_admin = init(json.load(f))    
             # Save models IDs after initialization
             tenant_profile_model = TenantProfile(id=tenant_profile.id.id)
             tenant_model = Tenant(id=tenant.id.id)

@@ -28,9 +28,8 @@
                 </a>
             {% endif %}
 
-
             <div class="flex column">
-                <p>Лицензия: {{ 'Аткивна' if license_status else 'Неактивна' }}</p>
+                <p>Лицензия: {{ 'Активна' if license_status else 'Неактивна' }}</p>
                 {% if license_status %} <p>Истекает: {{ protected_data.expires_at | dateformat }}</p> {% endif %}
             </div>
 

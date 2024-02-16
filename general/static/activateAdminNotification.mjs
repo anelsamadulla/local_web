@@ -1,11 +1,32 @@
-
-
 class ActivateAdminNotification {
     constructor() {
         this.links = document.querySelectorAll('.activation-link');
         this.toastContainer = document.querySelector('.toast-container');
         console.log(this.toastContainer);
         // console.log(this.links);
+        this.activateAdmin = this.activateAdmin.bind(this); // Bind the method to the class instance
+    }
+
+    activateAdmin(adminId, email, newPassword) { // Include email parameter
+        fetch('/activate_admin', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ admin_id: adminId, email: email, new_password: newPassword }), // Include email in the request body
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to activate admin');
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log(data);
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
     }
 
     findActivationLink() {
@@ -16,6 +37,14 @@ class ActivateAdminNotification {
             }
 
             for (let i = 0; i < this.links.length; i++) {
+                const adminId = this.links[i].dataset.adminId;
+                this.links[i].addEventListener('click', () => {
+                    const newPassword = prompt('Enter new password:');
+                    if (newPassword) {
+                        this.activateAdmin(adminId, newPassword);
+                    }
+                });
+                
                 const html = `
                 <div class="toast" id="toast-${i}" data-bs-autohide="false" role="alert" aria-live="assertive" aria-atomic="true">
                     <div class="toast-header">
