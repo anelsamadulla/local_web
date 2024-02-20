@@ -6,7 +6,7 @@ import json, jsonify
 from datetime import date
 import pathlib
 import jwt
-from flask import Blueprint, redirect, render_template, request, url_for
+from flask import Blueprint, redirect, render_template, request, url_for, abort
 from service.tb import init, init_dashboard
 from service.tb.user import get_user_activation_link, update_user
 from service.tb.tenant_profile import get_tenant_profile
@@ -61,6 +61,7 @@ def index(open_tab=False):
             except UserActivatedException:
                 pass
             data['admins'].append(admin)
+            # init_dashboard(admin.id)
 
         # Add miscellaneous data in context
         data['tenant_form'] = tenant_form.TenantForm()
@@ -94,27 +95,13 @@ def admins(page):
         except UserActivatedException:
             pass
         data['admins'].append(admin)
-
+        # init(admin.id, admin.email)
     # Add miscellaneous data in context
     data['tenant_form'] = tenant_form.TenantForm()
     data['protected_data'] = jwt.decode(key['jwt_token'], options={"verify_signature": False})
     data['license_status'] = date.today() < date.fromtimestamp(data['protected_data']['expires_at'])
 
     return render_template('general/admins.html', **data)
-
-# Route to handle activation and initialization
-@general_bp.route('/activate_admin', methods=['POST'])
-def activate_admin():
-    data = request.json
-    admin_id = data.get('admin_id')
-    email = data.get('email')  # Retrieve email from request payload
-    new_password = data.get('new_password')
-    
-    # Call init_dashboard with email, admin_id, and new_password
-    init_dashboard(email, new_password)
-
-    return jsonify({'message': 'Admin activated and dashboard initialized successfully'})
-
 
 @general_bp.route('/update_tenant', methods=['POST'])
 def post_tenant():
@@ -126,7 +113,6 @@ def post_tenant():
 
     return redirect(url_for('general_bp.index'))
 
-
 @general_bp.route('/update_admin', methods=['POST'])
 def post_admin():
     # Update tenant admin
@@ -137,7 +123,6 @@ def post_admin():
 
     return redirect(url_for('general_bp.index'))
 
-
 @general_bp.route('/loadkey', methods=['GET', 'POST'])
 def loadkey():
     if request.method == 'POST':
@@ -147,11 +132,14 @@ def loadkey():
 
         with open('generated_key.json', 'r') as f:
             # Initiate Cuba with the key
-            tenant_profile, tenant, tenant_admin = init(json.load(f))    
+            tenant_profile, tenant, tenant_admin, token = init(json.load(f))   
             # Save models IDs after initialization
             tenant_profile_model = TenantProfile(id=tenant_profile.id.id)
             tenant_model = Tenant(id=tenant.id.id)
             tenant_admin_model = TenantAdmin(id=tenant_admin.id.id)
+            print(token.token)
+            print(token.refresh_token)
+            init_dashboard(token.token, token.refresh_token)
             db.session.add_all([tenant_profile_model, tenant_model, tenant_admin_model])
             db.session.commit()
 
@@ -163,18 +151,17 @@ def loadkey():
 
         return render_template('general/loadkey.html', key_exists=key_exists)
 
-
 @general_bp.route('/asd', methods=['GET'])
 def delete():
-    tenant_profile = db.session.scalar(db.select(TenantProfile))
-    db.session.delete(tenant_profile)
-    db.session.commit()
-
-    tenant = db.session.scalar(db.select(Tenant))
-    db.session.delete(tenant)
-    db.session.commit()
-
-    admins = db.session.scalars(db.select(TenantAdmin)).all()
-    for admin in admins:
-        db.session.delete(admin)
-    db.session.commit()
+    try:
+        # Delete records from TenantProfile table
+        TenantProfile.query.delete()
+        # Delete records from Tenant table
+        Tenant.query.delete()
+        # Delete records from TenantAdmin table
+        TenantAdmin.query.delete()
+        db.session.commit()
+        return "All forms and data deleted successfully"
+    except Exception as e:
+        db.session.rollback()
+        abort(500, str(e))

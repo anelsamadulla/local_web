@@ -1,93 +1,78 @@
 {% extends "general/base.html" %}
-{% block title %}{{ tenant.name }}{% endblock %}
+{% block title %}{{tenant.name}}{%endblock%}
 {% block content %}
-
-    <div class="container">
-        <form action="" class="form tenant-profile card">
-
-            <h4>{{ tenant_profile.name }}</h4>
-
-            <div class="form-inputs">
+<div class="container">
+    <form action="" class="form tenant-profile card">
+        <h4>{{ tenant_profile.name }}</h4>
+        <div class="form-inputs">
+            {% if tenant_profile %}
                 <div>
                     <label class="form-label" for="max-devices">Макс. устройств</label>
-                    <input disabled class="form-control" id="max-devices" value="{{ tenant_profile.profile_data.configuration.maxDevices }}" type="number">
+                    <input disabled class="form-control" id="max-devices" value="{{ tenant_profile.profile_data.configuration.maxDevices if tenant_profile.profile_data.configuration else '' }}" type="number">
                 </div>
-
                 <div>
                     <label class="form-label" for="max-assets">Макс. активов</label>
-                    <input disabled class="form-control" id="max-assets" value="{{ tenant_profile.profile_data.configuration.maxAssets }}" type="number">
+                    <input disabled class="form-control" id="max-assets" value="{{ tenant_profile.profile_data.configuration.maxAssets if tenant_profile.profile_data.configuration else '' }}" type="number">
                 </div>
-
                 <div>
                     <label class="form-label" for="max-customers">Макс. клиентов</label>
-                    <input disabled class="form-control" id="max-customers" value="{{ tenant_profile.profile_data.configuration.maxCustomers }}" type="number">
+                    <input disabled class="form-control" id="max-customers" value="{{ tenant_profile.profile_data.configuration.maxCustomers if tenant_profile.profile_data.configuration else '' }}" type="number">
                 </div>
-
                 <div>
                     <label class="form-label" for="max-users">Макс. пользователей</label>
-                    <input disabled class="form-control" id="max-users" value="{{ tenant_profile.profile_data.configuration.maxUsers }}" type="number">
+                    <input disabled class="form-control" id="max-users" value="{{ tenant_profile.profile_data.configuration.maxUsers if tenant_profile.profile_data.configuration else '' }}" type="number">
                 </div>
-            </div>
-        </form>
-    </div>
-
+            {% else %}
+                <p>No tenant profile available.</p>
+            {% endif %}
+        </div>
+    </form>
+</div>
     <div class='container'>
         <form action="{{ url_for('general_bp.post_tenant') }}" method="POST" class="form tenant card">
             {{ tenant_form.csrf_token }}
             <h4>{{ tenant.name }}</h4>
-
             <div class="form-inputs">
-
                 <div>
                     {{ tenant_form.country.label(class="form-label") }}
                     {{ tenant_form.country(value=tenant.country | or_blank, class="form-control") }}
                 </div>
-
                 <div>
                     {{ tenant_form.state.label(class="form-label") }}
                     {{ tenant_form.state(value=tenant.state | or_blank, class="form-control") }}
                 </div>
-
                 <div>
                     {{ tenant_form.city.label(class="form-label") }}
                     {{ tenant_form.city(value=tenant.city | or_blank, class="form-control") }}
                 </div>
-
                 <div>
                     {{ tenant_form.zip_code.label(class="form-label") }}
                     {{ tenant_form.zip_code(value=tenant.zip | or_blank, class="form-control") }}
                 </div>
-
                 <div>
                     {{ tenant_form.address.label(class="form-label") }}
                     {{ tenant_form.address(value=tenant.address | or_blank, class="form-control") }}
                 </div>
-
                 <div>
                     {{ tenant_form.address2.label(class="form-label") }}
                     {{ tenant_form.address2(value=tenant.address2 | or_blank, class="form-control") }}
                 </div>
-
                 <div>
                     {{ tenant_form.phone.label(class="form-label") }}
                     {{ tenant_form.phone(value=tenant.phone | or_blank, class="form-control") }}
                 </div>
-
                 <div>
                     {{ tenant_form.email.label(class="form-label") }}
                     {{ tenant_form.email(value=tenant.email | or_blank, class="form-control") }}
                 </div>
-
                 {{ tenant_form.tenant_id(value=tenant.id.id)}} 
                 {{ tenant_form.title(value=tenant.title) }}
-
                 <div>
                     {{ tenant_form.submit(class="btn btn-primary") }}
                 </div>
             </div>
         </form>
     </div>
-
     <div class="container">
         {% for tenant_admin in admins %}
             {% if tenant_admin.activation_url %}
@@ -100,9 +85,7 @@
             {% endif %}
         {% endfor %}
     </div>
-    
 {% endblock %}
 {% block endscripts %}
     <script src="{{ url_for('general_bp.static', filename='activateAdminNotification.mjs') }}"></script>
 {% endblock%}
-

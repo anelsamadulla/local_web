@@ -14,9 +14,7 @@
         <div class="nav">
             <a class="nav-link" href="{{ url_for('general_bp.loadkey') }}">Обновить ключ</a>
         </div>
-
         <div class="flex gap-4 flex-center">
-
             <!-- Render proper nav image for current page -->
             {% if request.endpoint == 'general_bp.index' %}
             <a href="{{ url_for('general_bp.admins', page=1) }}">
@@ -27,21 +25,17 @@
                     <img style="width: 50px; height: 50px;" src="{{ url_for('static', filename='img/home.png') }}" alt="Главная">
                 </a>
             {% endif %}
-
             <div class="flex column">
-                <p>Лицензия: {{ 'Активна' if license_status else 'Неактивна' }}</p>
+                <p>Лицензия: {{'Активна' if license_status else 'Неактивна'}}</p>
                 {% if license_status %} <p>Истекает: {{ protected_data.expires_at | dateformat }}</p> {% endif %}
             </div>
 
         </div>
     </div>
     <div id="content">{% block content %}{% endblock %}</div>
-
     <div class="toast-container p-3 bottom-0 end-0"></div> 
-    
     <div id="footer">
       {% block footer %}
-      
       {% endblock %}
     </div>
     <script src="{{url_for('static', filename='js/bootstrap.min.js')}}"></script>

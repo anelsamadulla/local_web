@@ -1,57 +1,45 @@
 {% extends "general/base.html" %}
 {% block title %}Администраторы владельца{% endblock %}
 {% block content %}
-
     <div class="container column">
-
         {% for tenant_admin in admins %}
             <div class="container">
                 <form action="{{ url_for('general_bp.post_admin') }}" method="POST" class="form tenant-admin card">
-
                     <h4>Администратор владельца{% if tenant_admin.activation_url %}<b> Не активирован</b>{% endif %}</h4>
                     {% if tenant_admin.activation_url %}
                         <a class="activation-link center" href="{{ tenant_admin.activation_url }}" target="_blank">Активировать</a>
                     {% endif %}
-
                     <div class="form-inputs">
                         {{ tenant_admin.admin_form.csrf_token }}
-                        
                         <div>
                             {{ tenant_admin.admin_form.first_name.label(class="form-label") }}
                             {{ tenant_admin.admin_form.first_name(value=tenant_admin.first_name | or_blank, class="form-control") }}
                         </div>
-
                         <div>
                             {{ tenant_admin.admin_form.last_name.label(class="form-label") }}
                             {{ tenant_admin.admin_form.last_name(value=tenant_admin.last_name | or_blank, class="form-control") }}
                         </div>
-
                         <div>
                             {{ tenant_admin.admin_form.phone.label(class="form-label") }}
                             {{ tenant_admin.admin_form.phone(value=tenant_admin.phone | or_blank, disabled=True, class="form-control") }}
                         </div>
-
                         <div>
                             {{ tenant_admin.admin_form.email.label(class="form-label") }}
                             {{ tenant_admin.admin_form.email(value=tenant_admin.email | or_blank, disabled=True, class="form-control") }}
                         </div>
-
+                        {{ tenant_admin.admin_form.admin_id(value=tenant_admin.id.id) }}
                         <div>
                             <!-- Label for the password field -->
-                            {{ tenant_admin.admin_form.admin_password.label(class="form-label", style="display: none") }}
-                        
+                            {{tenant_admin.admin_form.admin_password.label(class="form-label", style="display: none")}}
                             <!-- Hidden password field (disabled) -->
-                            {{ tenant_admin.admin_form.admin_password(value="", disabled=True, class="form-control", style="display: none") }}
-                        </div>
-                        
-
+                            {{tenant_admin.admin_form.admin_password(value="", disabled=True, class="form-control", style="display: none")}}
+                        </div>  
                         <div>
-                            {{ tenant_admin.admin_form.submit(class="btn btn-primary") }}
+                            {{tenant_admin.admin_form.submit(class="btn btn-primary")}}
                         </div>
                     </div>
                 </form>
             </div>
         {% endfor %}
     </div>
-
 {% endblock %}

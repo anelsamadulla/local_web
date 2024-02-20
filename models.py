@@ -22,5 +22,3 @@ class TenantAdmin(db.Model):
     __tablename__ = 'tenant_admins'
     
     id: Mapped[str] = mapped_column(primary_key=True, unique=True)
-    password: Mapped[str] = mapped_column()
-    
