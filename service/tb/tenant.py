@@ -3,6 +3,7 @@ from tb_rest_client.rest import ApiException
 
 from . import username, password, url, logging
 
+
 def get_tenant(tenant_id):
     with RestClientCE(url) as rest_client:
         try:

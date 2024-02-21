@@ -3,7 +3,6 @@ Main blueprint.
 """
 import os
 import json
-import jsonify
 from datetime import date
 import pathlib
 import jwt
@@ -16,9 +15,6 @@ from models import TenantProfile, Tenant, TenantAdmin
 from database import db
 from exceptions import UserActivatedException
 from general.forms import tenant_form, tenant_admin_form, reset_password_form, add_tenant_admin
-from service.tb import url
-import requests
-from requests.exceptions import RequestException
 
 basedir = pathlib.Path(__file__).parent.parent.resolve()
 
@@ -107,6 +103,7 @@ def admins(page):
 
     return render_template('general/admins.html', **data)
 
+
 @general_bp.route('/update_tenant', methods=['POST'])
 def post_tenant():
     # Update tenant
@@ -116,6 +113,7 @@ def post_tenant():
         update_tenant(tenant_id=form.data.pop('tenant_id'), data=form.data)
 
     return redirect(url_for('general_bp.index'))
+
 
 @general_bp.route('/update_admin', methods=['POST'])
 def post_admin():
@@ -169,7 +167,7 @@ def loadkey():
 
         with open('generated_key.json', 'r') as f:
             # Initiate Cuba with the key
-            tenant_profile, tenant, tenant_admin, token = init(json.load(f))   
+            tenant_profile, tenant, tenant_admin, token = init(json.load(f))
             # Save models IDs after initialization
             tenant_profile_model = TenantProfile(id=tenant_profile.id.id)
             tenant_model = Tenant(id=tenant.id.id)
@@ -187,6 +185,7 @@ def loadkey():
         key_exists = os.path.exists(filepath)
 
         return render_template('general/loadkey.html', key_exists=key_exists)
+
 
 @general_bp.route('/asd', methods=['GET'])
 def delete():

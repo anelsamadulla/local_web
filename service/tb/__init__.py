@@ -70,19 +70,19 @@ def init(data):
                 )
 
                 user = rest_client.save_user(user, send_activation_mail=False)
-                
+
                 admin_token = rest_client.get_user_token(user_id=user.id)
-                
-                print(admin_token) #Здесь возвращает {'refresh_token': , 'scope': , 'token': }
+
+                print(admin_token)  # Здесь возвращает {'refresh_token': , 'scope': , 'token': }
 
                 admin_token.refresh_token
                 # rest_client.check_activate_token(user_token)
-        
+
                 # Initialize dashboard and device profile
                 # device_profile, dashboard = init_dashboard(tenant.id)
 
                 return tenant_profile, tenant, user, admin_token
-            
+
             else:
                 # Handle the case when tenant profile creation fails
                 error_message = "Failed to create tenant profile"
