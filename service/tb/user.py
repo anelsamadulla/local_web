@@ -1,5 +1,5 @@
 from tb_rest_client.rest_client_ce import (
-    RestClientCE, ResetPasswordRequest, UserId, ChangePasswordRequest,
+    RestClientCE, ResetPasswordRequest, UserId,
     User
 )
 from tb_rest_client.rest import ApiException
@@ -87,8 +87,28 @@ def get_user_token(admin_id):
 def update_password(new_password, admin_id):
     with RestClientCE(url) as rest_client:
         try:
-            pass
-            # rest_client.token_login(token.token, token.refresh_token)
+            user_info = get_user(admin_id)
+            rest_client.login(username=user_info.email, password="dhacda")          
+        except ApiException as e:
+            # Check if the ApiException contains information about expired credentials
+            if e.status == 401 and 'resetToken' in e.body:
+                reset_token = e.body['resetToken']
+                # Handle the reset token as needed
+                print("Reset Token:", reset_token)
+                change_password_request = ResetPasswordRequest(reset_token=reset_token, new_password=new_password)
+                response = rest_client.change_password(change_password_request)
+                # return rest_client.save_user(User(id=UserId(id=admin_id)), send_activation_mail=False)
+                if response.status == 200:
+                    print("Password reset successful.")
+                    return True
+                else:
+                    print("Password reset failed.")
+                    return False
+            else:
+                # Handle other ApiException cases if needed
+                logging.exception(e)
+                
+
             # rest_client.get_token()
             # user = rest_client.get_user()
             # print(rest_client.get_user_password_policy())
@@ -106,5 +126,3 @@ def update_password(new_password, admin_id):
             # result = rest_client.set_user_credentials_enabled(user.id, True)
             # result = rest_client.reset_password(ResetPasswordRequest(token.refresh_token))
             # print(result)
-        except ApiException as e:
-            logging.exception(e)
