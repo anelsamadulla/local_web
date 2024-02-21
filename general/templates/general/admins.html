@@ -27,13 +27,23 @@
                             {{ tenant_admin.admin_form.email.label(class="form-label") }}
                             {{ tenant_admin.admin_form.email(value=tenant_admin.email | or_blank, disabled=True, class="form-control") }}
                         </div>
+
+                        <!-- Tenant admin ID -->
                         {{ tenant_admin.admin_form.admin_id(value=tenant_admin.id.id) }}
+                        <!-- Label for the password field -->
+                        {{ tenant_admin.admin_form.admin_password.label(class="form-label", style="display: none") }}
+                        <!-- Hidden password field (disabled) -->
+                        {{ tenant_admin.admin_form.admin_password(value="", disabled=True, class="form-control", style="display: none") }}
+                        
                         <div>
-                            <!-- Label for the password field -->
-                            {{tenant_admin.admin_form.admin_password.label(class="form-label", style="display: none")}}
-                            <!-- Hidden password field (disabled) -->
-                            {{tenant_admin.admin_form.admin_password(value="", disabled=True, class="form-control", style="display: none")}}
-                        </div>  
+                            <button 
+                                class="btn btn-warning resetPassword" 
+                                id="{{ tenant_admin.id.id }}"
+                                data-firstname="{{ tenant_admin.first_name }}"
+                                data-lastname="{{ tenant_admin.last_name }}"
+                            >Восстановить пароль</button>
+                        </div>
+
                         <div>
                             {{tenant_admin.admin_form.submit(class="btn btn-primary")}}
                         </div>
@@ -42,4 +52,81 @@
             </div>
         {% endfor %}
     </div>
+    
+    <div class="modal" id="modal">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="reset-password-modal-body">
+                        <h2 class="fs-5 ">
+                            <span id="admin-first-name"></span>
+                            <span id="admin-last-name"></span>
+                        </h2>
+                        <form action="{{ url_for('general_bp.reset_password') }}" method="POST" class="form tenant-admin card">
+                            <div class="form-inputs column flex-center">
+                                {{ password_reset_form.csrf_token }}
+                                
+                                <div class="fit-width">
+                                    {{ password_reset_form.password1.label(class="form-label") }}
+                                    {{ password_reset_form.password1(class="form-control") }}
+                                </div>
+
+                                <div class="fit-width">
+                                    {{ password_reset_form.password2.label(class="form-label") }}
+                                    {{ password_reset_form.password2(class="form-control") }}
+                                </div>
+
+                                {{ password_reset_form.admin_id(id='password-reset-admin-id') }}
+
+                                <div class="centered">
+                                    {{ password_reset_form.submit(class="btn btn-primary") }}
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div id="add-admin-modal-body">
+                        <form action="{{ url_for('general_bp.add_admin') }}" method="POST" class="form tenant-admin card">
+                            <div class="form-inputs column flex-center">
+                                {{ add_tenant_admin_form.csrf_token }}
+                                
+                                <div class="fit-width">
+                                    {{ add_tenant_admin_form.first_name.label(class="form-label") }}
+                                    {{ add_tenant_admin_form.first_name(class="form-control") }}
+                                </div>
+                    
+                                <div class="fit-width">
+                                    {{ add_tenant_admin_form.last_name.label(class="form-label") }}
+                                    {{ add_tenant_admin_form.last_name(class="form-control") }}
+                                </div>
+                    
+                                <div class="fit-width">
+                                    {{ add_tenant_admin_form.email.label(class="form-label") }}
+                                    {{ add_tenant_admin_form.email(class="form-control") }}
+                                </div>
+                    
+                                <div class="fit-width">
+                                    {{ add_tenant_admin_form.phone.label(class="form-label") }}
+                                    {{ add_tenant_admin_form.phone(class="form-control") }}
+                                </div>
+                    
+                                <div class="centered">
+                                    {{ add_tenant_admin_form.submit(class="btn btn-primary") }}
+                                </div>
+                        </form>
+                    </div>
+                </div>
+            </div>  
+        </div>
+    </div>
+
+    
 {% endblock %}
+
+{% block endscripts %}
+<script src="{{ url_for('general_bp.static', filename='modal.mjs') }}"></script>
+{% endblock%}

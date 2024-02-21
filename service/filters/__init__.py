@@ -1,6 +1,6 @@
 """
 Custom Jinja2 filters will be written here.
-""" 
+"""
 from datetime import date
 
 
@@ -9,7 +9,7 @@ def dateformat_filter(value, format: str = '%d.%m.%Y'):
     return dt_object.strftime(format)
 
 
-def or_blank(value: str|None):
+def or_blank(value: str | None):
     return value if value is not None else ''
 
 

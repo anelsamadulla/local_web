@@ -23,6 +23,18 @@ body {
     align-items: center;
 }
 
+.flex-space-between {
+    justify-content: space-between;
+    align-items: center;
+}
+
+.show-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+
 .gap-4 {
     gap: 2rem;
 }
@@ -94,12 +106,21 @@ form .form-inputs {
     flex-wrap: wrap;
     justify-content: space-between;
     gap: 25px 0;
-    width: 600px;
+    max-width: 600px;
     /* ga */
 }
 
 form .form-inputs div {
     width: 48%;
+    max-width: 400px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    align-items: center;
+}
+
+form .form-inputs .fit-width {
+    width: 90%;
     max-width: 400px;
     display: flex;
     flex-direction: column;

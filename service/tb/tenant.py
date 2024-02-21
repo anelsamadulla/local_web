@@ -40,7 +40,7 @@ def get_tenant_admins_by_tenant_id(tenant_id, page):
             rest_client.login(username=username, password=password)
 
             admins = rest_client.get_tenant_admins(tenant_id=tenant_id, page_size=10, page=page)
-            print(admins)
+            # print(admins)
             return admins.data
 
         except ApiException as e:

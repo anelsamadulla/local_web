@@ -4,10 +4,10 @@ from wtforms.validators import DataRequired
 
 
 class TenantAdminForm(FlaskForm):
-    first_name = StringField('Имя')
-    last_name = StringField('Фамилия')
+    first_name = StringField('Имя', validators=(DataRequired('Это поле обязательно'), ))
+    last_name = StringField('Фамилия', validators=(DataRequired('Это поле обязательно'), ))
     phone = StringField('Номер телефона')
-    email = StringField('Электронная почта')
+    email = EmailField('Электронная почта')
     admin_id = HiddenField()
-    admin_password = PasswordField('Новый пароль') 
+    admin_password = PasswordField('Новый пароль')
     submit = SubmitField('Обновить')

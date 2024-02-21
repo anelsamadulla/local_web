@@ -2,37 +2,92 @@
 
 class Modal {
     constructor() {
-        this.modal = document.querySelector('#personal-info');
-        this.toggleButton = document.querySelector('#personal-info-toggle');
-        console.log(this.toggleButton);
+        // Modal window
+        this.modal = document.querySelector('#passwordResetModal');
+        
+        // Password reset buttons
+        this.triggers = document.querySelectorAll('.resetPassword');
 
-        this.openModal = false;
-        this.openModal ? this.displayModal() : this.hideModal();
-        this.initEvents();
+        // Add admin button
+        this.addAdminBtn = document.querySelector('#addAdmin');
+        
+        // Selected admin data
+        this.fistNameSpan = document.querySelector('#admin-first-name');
+        this.lastNameSpan = document.querySelector('#admin-last-name');
+        this.adminId = document.querySelector('#password-reset-admin-id');
+        
+        // Create arrays for different modal elements and add them to the arrays;
+        this.resetPasswordModalElems = [];
+        this.addAdminModalElems = [];
+        this.initElems();
+
+        this.addResetPasswordEventListeners();
+        this.addAddAdminEventListener();
     }
 
-    setOpenModal(value) {
-        value ? this.displayModal() : this.hideModal();
-        this.openModal = value;
-    }
+    addResetPasswordEventListeners() {
+        this.triggers.forEach(trigger => {
+            trigger.addEventListener('click', event => {
+                event.preventDefault();
 
-    displayModal() {
-        if (this.modal.classList.contains('hidden')){
-            this.modal.classList.remove('hidden');
-        }
-    }
+                // Display modal
+                console.log(event.target);
+                const modal = new bootstrap.Modal('#modal', {focus: true})
+                modal.show()
+                console.log(modal)
 
-    hideModal() {
-        if (!this.modal.classList.contains('hidden')) {
-            this.modal.classList.add('hidden');
-        }
-    }
+                // Set admin first & last name
+                console.log(event.target.getAttribute('firstName'));
+                this.fistNameSpan.innerHTML = event.target.dataset.firstname;
+                this.lastNameSpan.innerHTML = event.target.dataset.lastname;
 
-    initEvents() {
-        this.toggleButton.addEventListener('click', event => {
-            event.preventDefault();
-            this.setOpenModal(!this.openModal);
+                // Set admin id in form input
+                this.adminId.value = event.target.getAttribute('id');
+
+                // Show corresponding header
+                document.querySelector('.modal-title').innerHTML = 'Восстановить пароль';
+
+                // Display reset password elements
+                this.addAdminModalElems.forEach(element => {
+                    element.classList.add("hidden");
+                });
+                this.resetPasswordModalElems.forEach(element => {
+                    element.classList.remove("hidden");
+                });
+            })
         })
+    }
+
+    addAddAdminEventListener() {
+        this.addAdminBtn.addEventListener('click', event => {
+            event.preventDefault();
+
+            // Display modal
+            const modal = new bootstrap.Modal('#modal', {focus: true});
+            modal.show()
+
+
+            // Show corresponding header
+            document.querySelector('.modal-title').innerHTML = 'Создать администратора';
+
+            // Display add admin elements
+            this.addAdminModalElems.forEach(element => {
+                element.classList.remove("hidden");
+            });
+            this.resetPasswordModalElems.forEach(element => {
+                element.classList.add("hidden");
+            });
+        })
+    }
+
+    initElems() {
+        this.resetPasswordModalElems.push(
+            document.querySelector('#reset-password-modal-body')
+        );
+
+        this.addAdminModalElems.push(
+            document.querySelector('#add-admin-modal-body')    
+        );
     }
 }
 

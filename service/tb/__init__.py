@@ -2,13 +2,15 @@
 Module for Cuba API.
 """
 import logging
-import os, pathlib
-import json 
+import os
+import pathlib
+import json
 import jwt
-from tb_rest_client.rest_client_ce import *
-from tb_rest_client.rest_client_ce import RestClientCE
+from tb_rest_client.rest_client_ce import (
+    RestClientCE, TenantProfile, Tenant, User, DeviceProfile, Device, Dashboard, EntityRelation
+)
 from tb_rest_client.rest import ApiException
-import requests
+import requests  # noqa
 
 basedir = pathlib.Path(__file__).parent.parent.parent.resolve()
 
@@ -23,21 +25,24 @@ url = "http://192.168.11.93:80"
 username = "sysadmin@thingsboard.org"
 password = "sysadmin"
 
+
 def init(data):
     print(data)
     data['protected_data'] = jwt.decode(data['jwt_token'], options={"verify_signature": False})
     with RestClientCE(base_url=url) as rest_client:
         try:
             rest_client.login(username=username, password=password)
-            
-            tenant_profile = TenantProfile(name=f'Профайл {data["company"]}', 
-                        profile_data={
-                            'configuration': {
-                                "type": "DEFAULT",
-                                "maxDevices": data['protected_data']['devices'],
-                            }
-                        })
-            
+
+            tenant_profile = TenantProfile(
+                name=f'Профайл {data["company"]}',
+                profile_data={
+                    'configuration': {
+                        "type": "DEFAULT",
+                        "maxDevices": data['protected_data']['devices'],
+                    }
+                }
+            )
+
             tenant_profile = rest_client.save_tenant_profile(tenant_profile)
 
             if tenant_profile:
@@ -52,7 +57,7 @@ def init(data):
                     zip=data.get('zip', ''),
                     email=data.get('email', 'email@email.com')
                 )
-                
+
                 tenant = rest_client.save_tenant(tenant)
 
                 user = User(
@@ -62,7 +67,6 @@ def init(data):
                     first_name=data['issued_for']['fname'],
                     last_name=data['issued_for']['lname'],
                     phone=data['issued_for'].get('phone', '77777777777'),
-                    
                 )
 
                 user = rest_client.save_user(user, send_activation_mail=False)
@@ -97,16 +101,8 @@ def init(data):
             return None
 
 
-# def saving(device, device_profile, dashboard):
-#     with RestClientCE(base_url=url) as rest_client:
-#         try:
-#             rest_client.login()
+def init_dashboard(tenant_username, tenant_password):
 
-#         except ApiException as e:
-#             logging.exception(e)
-
-
-def init_dashboard(token, refresh_token):
     with RestClientCE(base_url=url) as rest_client:
         try:
             # rest_client.is_user_token_access_enabled()
@@ -119,7 +115,7 @@ def init_dashboard(token, refresh_token):
             config_file_path1 = os.path.join(basedir, 'example_camera_profile.json')
             with open(config_file_path1, 'r') as config_file:
                 device_profile_data = json.load(config_file)
-            
+
             # Create and save device profile
             # default_device_profile_id = rest_client.get_default_device_profile_info().id
             # device_profile = DeviceProfile(device_profile_id = default_device_profile_id, name=device_profile_data["name"], profile_data=device_profile_data)
