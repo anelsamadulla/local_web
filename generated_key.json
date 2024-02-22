@@ -1,14 +1,15 @@
 {
-  "company": "Dashboard_test0000",
-  "email": "dash_test000@mail.com",
-  "phone": "77012345678",
-  "created_at": 1706832000,
-  "issued_for": {
-    "fname": "Test000",
-    "lname": "Dash000",
-    "email": "dash_admin00@mail.com",
-    "phone": "77081234567"
-  },
-  "jwt_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjcmVhdGVkX2F0IjoxNzA2ODMyMDAwLCJkZXZpY2VzIjoxMDAwLCJzZXJ2aWNlcyI6WzEsMl0sImV4cGlyZXNfYXQiOjE3Njk5OTA0MDAuMCwiaXNzdWVkX2ZvciI6IkFCQyIsImRldmljZV9pZCI6IjVlM2RhOTI0LWMxYjctMTFlZS1iMTJiLTAyNDJhYzEyMDAwMyJ9.48HEJpMuSSvxOvhVYukRhYB0tsvse93rByrZvfB0v-g",
-  "payment_status": "Completed"
+    "company": "Cuba IoT",
+    "created_at": 1708560000,
+    "email": "tenant1@cuba.org",
+    "issued_for": {
+        "email": "admin@mail.com",
+        "fname": "Name",
+        "lname": "Surname",
+        "phone": "77012223344"
+    },
+    "jwt_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjcmVhdGVkX2F0IjoxNzA4NTYwMDAwLCJkZXZpY2VzIjoxMDAwLCJzZXJ2aWNlcyI6WzFdLCJleHBpcmVzX2F0IjoxNzY5OTI4MTI3LCJpc3N1ZWRfZm9yIjoiQ3ViYSBJb1QiLCJkZXZpY2VfaWQiOiI0YTY5MzcxZS1kMTY3LTExZWUtOWFhNy0wMjQyYWMxMzAwMDMifQ.zvxoNTXyB_lxgMnz7Xtyc27EFWQUq8yl3-0MqWii2DQ",
+    "payment_status": "Completed",
+    "phone": "77012345678",
+    "status": 200
 }

@@ -14,7 +14,7 @@ from service.tb.tenant_profile import get_tenant_profile
 from service.tb.tenant import get_tenant, update_tenant, get_tenant_admins_by_tenant_id
 from models import TenantProfile, Tenant, TenantAdmin
 from database import db
-from exceptions import UserActivatedException
+from exceptions import UserActivatedException, LicenseNotValidException
 from general.forms import tenant_form, tenant_admin_form, reset_password_form, add_tenant_admin
 
 basedir = pathlib.Path(__file__).parent.parent.resolve()
@@ -188,9 +188,10 @@ def loadkey():
         with open('generated_key.json', 'r') as f:
 
             # Initiate Cuba with the key
-            result = init(json.load(f))
-            if isinstance(result, jwt.exceptions.DecodeError):
-                flash("Эта лицензия недействительна", 'error')
+            try:
+                result = init(json.load(f))
+            except LicenseNotValidException:
+                flash('Лицензия недействительна.')
                 return redirect(url_for('general_bp.loadkey'))
 
             tenant_profile, tenant, tenant_admin, token = result

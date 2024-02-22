@@ -65,10 +65,17 @@ def init(data):
 
             try:
                 jwt_settings = rest_client.get_jwt_setting()
-                data['protected_data'] = jwt.decode(data['jwt_token'], key=jwt_settings.token_signing_key)
+                data['protected_data'] = jwt.decode(
+                    data['jwt_token'],
+                    key=jwt_settings.token_signing_key,
+                    algorithms=['HS256']
+                )
             except jwt.exceptions.DecodeError as exception:
                 logging.error(f'Error decoding license {exception}')
-                return exception
+                raise LicenseNotValidException('Лицензия недействительна.')
+            except KeyError as exception:
+                logging.exception(f'Error decoding license {exception}')
+                raise LicenseNotValidException('Лицензия недействительна.')
 
             tenant_profile = TenantProfile(
                 name=f'Профайл {data["company"]}',
