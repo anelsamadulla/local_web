@@ -11,6 +11,7 @@ from tb_rest_client.rest_client_ce import (
     DeviceProfileData
 )
 from tb_rest_client.rest import ApiException
+from exceptions import NoLicenseException, LicenseNotValidException
 import requests  # noqa
 
 basedir = pathlib.Path(__file__).parent.parent.parent.resolve()
@@ -27,12 +28,47 @@ username = "sysadmin@thingsboard.org"
 password = "654321"
 
 
+# TODO: Обернуть этим декоратором все функции, которые обращаются к REST API.
+def check_credentials(api_func):
+    """Check if license is valid"""
+    def wrapper(*args, **kwargs):
+        # Get the key file and raise if does not exist.
+        filepath = os.path.join(basedir, 'generated_key.json')
+        if not os.path.exists(filepath):
+            raise NoLicenseException('Лицензия не найдена.')
+
+        # Open license and validate it.
+        key = json.load(open(filepath))
+        with RestClientCE(base_url=url) as rest_client:
+            try:
+                rest_client.login(username=username, password=password)
+                try:
+                    jwt_settings = rest_client.get_jwt_setting()
+                    jwt.decode(key['jwt_token'], key=jwt_settings.token_signing_key)
+
+                except jwt.exceptions.DecodeError as exception:
+                    logging.error(f'Error decoding license {exception}')
+                    raise LicenseNotValidException('Лицензия недействительна.')
+            except ApiException as e:
+                logging.exception(e)
+
+        return api_func(args, **kwargs)
+
+    return wrapper
+
+
 def init(data):
-    print(data)
-    data['protected_data'] = jwt.decode(data['jwt_token'], options={"verify_signature": False})
+
     with RestClientCE(base_url=url) as rest_client:
         try:
             rest_client.login(username=username, password=password)
+
+            try:
+                jwt_settings = rest_client.get_jwt_setting()
+                data['protected_data'] = jwt.decode(data['jwt_token'], key=jwt_settings.token_signing_key)
+            except jwt.exceptions.DecodeError as exception:
+                logging.error(f'Error decoding license {exception}')
+                return exception
 
             tenant_profile = TenantProfile(
                 name=f'Профайл {data["company"]}',
@@ -74,7 +110,8 @@ def init(data):
 
                 admin_token = rest_client.get_user_token(user_id=user.id)
 
-                print(admin_token)  # Здесь возвращает {'refresh_token': , 'scope': , 'token': }
+                # Здесь возвращает {'refresh_token': , 'scope': , 'token': }
+                print(jwt.decode(admin_token.token, options={"verify_signature": False}))
 
                 admin_token.refresh_token
                 # rest_client.check_activate_token(user_token)
@@ -130,7 +167,7 @@ def init_dashboard(token, refresh_token):
             )
             device_profile = rest_client.save_device_profile(device_profile)
 
-            logging.info(" Device profile was created:\n%r\n", device_profile)
+            # logging.info(" Device profile was created:\n%r\n", device_profile)
 
             # Create and save devices
             devices = []
@@ -140,7 +177,7 @@ def init_dashboard(token, refresh_token):
                 device = rest_client.save_device(device)
                 device_id = rest_client.get_device_by_id(device_id=device.id.id)
                 devices.append(device_id)
-                logging.info(f"Device {device_id} was created:\n%r\n", device_id)
+                # logging.info(f"Device {device_id} was created:\n%r\n", device_id)
 
             # Save the list of device IDs to a text file
             entity_list = []
@@ -167,7 +204,7 @@ def init_dashboard(token, refresh_token):
                 dashboard = rest_client.save_dashboard(dashboard)
                 logging.info("Dashboard was created:\n\n")
 
-            print(dashboard.to_str())
+            # print(dashboard.to_str())
 
         except ApiException as e:
             logging.exception(e)

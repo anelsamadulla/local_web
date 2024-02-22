@@ -2,6 +2,7 @@ import os
 from flask import Flask
 from dotenv import load_dotenv
 from service.filters import load_custom_filters
+from jinja2 import ChainableUndefined
 
 from database import init_db
 from general.general import general_bp
@@ -10,6 +11,7 @@ from general.general import general_bp
 def create_app():
     app = Flask(__name__)
     app.config.from_object(os.environ['APP_SETTINGS'])
+    app.jinja_env.undefined = ChainableUndefined
     init_db(app)
     app.register_blueprint(general_bp)
     return app

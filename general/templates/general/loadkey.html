@@ -16,6 +16,17 @@
                 <a href="{{ url_for('general_bp.index') }}">Назад</a>
                 {% endif %}
                 <input type="submit" value="Подтвердить">
+                {% with errors = get_flashed_messages(category_filter=["error"]) %}
+                    {% if errors %}
+                        <div class="alert-message block-message error">
+                        <ul>
+                            {% for msg in errors %}
+                                <li>{{ msg }}</li>
+                            {% endfor %}
+                        </ul>
+                        </div>
+                    {% endif %}
+                {% endwith %}
             </form>
         </div>
     </div>

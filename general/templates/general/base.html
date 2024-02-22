@@ -29,8 +29,8 @@
                 </a>
             {% endif %}
             <div class="flex column">
-                <p>Лицензия: {{'Активна' if license_status else 'Неактивна'}}</p>
-                {% if license_status %} <p>Истекает: {{ protected_data.expires_at | dateformat }}</p> {% endif %}
+                <p>Лицензия: {{'Активна' if license_status and tenant_profile else 'Неактивна'}}</p>
+                {% if license_status and tenant_prodile %} <p>Истекает: {{ protected_data.expires_at | dateformat }}</p> {% endif %}
             </div>
 
         </div>
@@ -41,7 +41,19 @@
       {% block footer %}
       {% endblock %}
     </div>
+
+    <div class="errors hidden">
+      {% with errors = get_flashed_messages(category_filter=["error"]) %}
+          {% if errors %}
+            {% for msg in errors %}
+                <span>{{ msg }}</span>
+            {% endfor %}
+          {% endif %}
+      {% endwith %}
+    </div>
+    
     <script src="{{url_for('static', filename='js/bootstrap.min.js')}}"></script>
+    <script src="{{url_for('general_bp.static', filename='errorNotification.mjs')}}"></script>
     {% block endscripts %}{% endblock %}
   </body>
 </html>

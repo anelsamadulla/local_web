@@ -6,7 +6,8 @@ import json
 from datetime import date
 import pathlib
 import jwt
-from flask import Blueprint, redirect, render_template, request, url_for, abort
+import logging
+from flask import Blueprint, redirect, render_template, request, url_for, abort, flash
 from service.tb import init, init_dashboard
 from service.tb.user import get_user_activation_link, update_user, update_password, create_tenant_admin
 from service.tb.tenant_profile import get_tenant_profile
@@ -41,24 +42,33 @@ def index(open_tab=False):
         key = json.load(open(filepath))
 
         # Get tenant profile id and fetch tenant profile data from Cuba
-        tenant_profile = db.session.scalar(db.select(TenantProfile))
-        data['tenant_profile'] = get_tenant_profile(str(tenant_profile.id))
+        try:
+            tenant_profile = db.session.scalar(db.select(TenantProfile))
+            data['tenant_profile'] = get_tenant_profile(str(tenant_profile.id))
+        except AttributeError as exception:
+            logging.exception(f'Aception occured: {exception}')
+            flash('Профиль владельца не найден', 'error')
 
         # Get tenant id and fetch tenant data from Cuba
-        tenant = db.session.scalar(db.select(Tenant))
-        data['tenant'] = get_tenant(str(tenant.id))
+        try:
+            tenant = db.session.scalar(db.select(Tenant))
+            data['tenant'] = get_tenant(str(tenant.id))
+        except AttributeError as exception:
+            logging.exception(f'Aception occured: {exception}')
+            flash('Аккаунт владельца не найден', 'error')
 
         # Get all admins and corresponding activation links from Cuba
-        admins = get_tenant_admins_by_tenant_id(tenant.id, page=0)
-        data['admins'] = []
-        for admin in admins:
-            admin.admin_form = tenant_admin_form.TenantAdminForm()
-            try:
-                admin.activation_url = get_user_activation_link(admin.id)[2:-1]
-            except UserActivatedException:
-                pass
-            data['admins'].append(admin)
-            # init_dashboard(admin.id)
+        if tenant:
+            admins = get_tenant_admins_by_tenant_id(tenant.id, page=0)
+            data['admins'] = []
+            for admin in admins:
+                admin.admin_form = tenant_admin_form.TenantAdminForm()
+                try:
+                    admin.activation_url = get_user_activation_link(admin.id)[2:-1]
+                except UserActivatedException:
+                    pass
+                data['admins'].append(admin)
+                # init_dashboard(admin.id)
 
         # Add miscellaneous data in context
         data['tenant_form'] = tenant_form.TenantForm()
@@ -80,20 +90,25 @@ def admins(page):
     key = json.load(open(filepath))
 
     # Get tenant id and fetch tenant data from Cuba
-    tenant = db.session.scalar(db.select(Tenant))
-    data['tenant'] = get_tenant(str(tenant.id))
+    try:
+        tenant = db.session.scalar(db.select(Tenant))
+        data['tenant'] = get_tenant(str(tenant.id))
+    except AttributeError as exception:
+        logging.exception(f'Aception occured: {exception}')
+        flash('Профиль владельца не найден', 'error')
 
     # Get all admin ids and fetch all admins data and corresponding activation links from Cuba
-    admins = get_tenant_admins_by_tenant_id(tenant.id, page=0)
-    data['admins'] = []
-    for admin in admins:
-        admin.admin_form = tenant_admin_form.TenantAdminForm()
-        try:
-            admin.activation_url = get_user_activation_link(admin.id)[2:-1]
-        except UserActivatedException:
-            pass
-        data['admins'].append(admin)
-        # init(admin.id, admin.email)
+    if tenant:
+        admins = get_tenant_admins_by_tenant_id(tenant.id, page=0)
+        data['admins'] = []
+        for admin in admins:
+            admin.admin_form = tenant_admin_form.TenantAdminForm()
+            try:
+                admin.activation_url = get_user_activation_link(admin.id)[2:-1]
+            except UserActivatedException:
+                pass
+            data['admins'].append(admin)
+
     # Add miscellaneous data in context
     data['password_reset_form'] = reset_password_form.ResetPasswordForm()
     data['add_tenant_admin_form'] = add_tenant_admin.AddTenantAdminForm()
@@ -147,6 +162,11 @@ def add_admin():
 
     if form.validate_on_submit():
         tenant = db.session.scalar(db.select(Tenant))
+        if not tenant:
+            logging.error('Tenant not found')
+            flash('Владелец не найден')
+            return redirect(url_for('general_bp.admins', page=1))
+
         create_tenant_admin(
             tenant.id,
             first_name=form.data['first_name'],
@@ -155,7 +175,7 @@ def add_admin():
             phone=form.data['phone']
         )
 
-    return redirect(url_for('general.bp.admins', page=1))
+    return redirect(url_for('general_bp.admins', page=1))
 
 
 @general_bp.route('/loadkey', methods=['GET', 'POST'])
@@ -166,8 +186,14 @@ def loadkey():
         f.save(os.path.join(basedir, 'generated_key.json'))
 
         with open('generated_key.json', 'r') as f:
+
             # Initiate Cuba with the key
-            tenant_profile, tenant, tenant_admin, token = init(json.load(f))
+            result = init(json.load(f))
+            if isinstance(result, jwt.exceptions.DecodeError):
+                flash("Эта лицензия недействительна", 'error')
+                return redirect(url_for('general_bp.loadkey'))
+
+            tenant_profile, tenant, tenant_admin, token = result
             # Save models IDs after initialization
             tenant_profile_model = TenantProfile(id=tenant_profile.id.id)
             tenant_model = Tenant(id=tenant.id.id)

@@ -23,7 +23,7 @@
                     <input disabled class="form-control" id="max-users" value="{{ tenant_profile.profile_data.configuration.maxUsers if tenant_profile.profile_data.configuration else '' }}" type="number">
                 </div>
             {% else %}
-                <p>No tenant profile available.</p>
+                <p>Профиль владельца не найден.</p>
             {% endif %}
         </div>
     </form>
