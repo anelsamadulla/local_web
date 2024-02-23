@@ -11,7 +11,7 @@ from tb_rest_client.rest_client_ce import (
     DeviceProfileData
 )
 from tb_rest_client.rest import ApiException
-from exceptions import NoLicenseException, LicenseNotValidException
+from exceptions import NoLicenseException, LicenseNotValidException, RestApiNotAvailableexception
 import requests  # noqa
 
 basedir = pathlib.Path(__file__).parent.parent.parent.resolve()
@@ -28,7 +28,6 @@ username = "sysadmin@thingsboard.org"
 password = "654321"
 
 
-# TODO: Обернуть этим декоратором все функции, которые обращаются к REST API.
 def check_credentials(api_func):
     """Check if license is valid"""
     def wrapper(*args, **kwargs):
@@ -44,15 +43,20 @@ def check_credentials(api_func):
                 rest_client.login(username=username, password=password)
                 try:
                     jwt_settings = rest_client.get_jwt_setting()
-                    jwt.decode(key['jwt_token'], key=jwt_settings.token_signing_key)
+                    jwt.decode(
+                        key['jwt_token'],
+                        key=jwt_settings.token_signing_key,
+                        algorithms=['HS256']
+                    )
 
                 except jwt.exceptions.DecodeError as exception:
                     logging.error(f'Error decoding license {exception}')
                     raise LicenseNotValidException('Лицензия недействительна.')
             except ApiException as e:
                 logging.exception(e)
+                raise RestApiNotAvailableexception('Не удалось подключиться к платформе')
 
-        return api_func(args, **kwargs)
+        return api_func(*args, **kwargs)
 
     return wrapper
 

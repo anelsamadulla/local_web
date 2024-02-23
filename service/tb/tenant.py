@@ -1,9 +1,10 @@
 from tb_rest_client.rest_client_ce import RestClientCE
 from tb_rest_client.rest import ApiException
 
-from . import username, password, url, logging
+from . import username, password, url, logging, check_credentials
 
 
+@check_credentials
 def get_tenant(tenant_id):
     with RestClientCE(url) as rest_client:
         try:
@@ -15,6 +16,7 @@ def get_tenant(tenant_id):
             logging.exception(e)
 
 
+@check_credentials
 def update_tenant(tenant_id: str, data):
     with RestClientCE(url) as rest_client:
         try:
@@ -35,6 +37,7 @@ def update_tenant(tenant_id: str, data):
             logging.exception(e)
 
 
+@check_credentials
 def get_tenant_admins_by_tenant_id(tenant_id, page):
     with RestClientCE(url) as rest_client:
         try:

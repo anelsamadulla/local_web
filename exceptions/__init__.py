@@ -3,13 +3,21 @@ Custom exceptions.
 """
 
 
-class UserActivatedException(Exception):
+class CubaBaseException(Exception):
     pass
 
 
-class NoLicenseException(Exception):
+class UserActivatedException(CubaBaseException):
     pass
 
 
-class LicenseNotValidException(Exception):
+class NoLicenseException(CubaBaseException):
+    pass
+
+
+class LicenseNotValidException(CubaBaseException):
+    pass
+
+
+class RestApiNotAvailableexception(CubaBaseException):
     pass

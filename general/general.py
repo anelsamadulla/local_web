@@ -14,7 +14,7 @@ from service.tb.tenant_profile import get_tenant_profile
 from service.tb.tenant import get_tenant, update_tenant, get_tenant_admins_by_tenant_id
 from models import TenantProfile, Tenant, TenantAdmin
 from database import db
-from exceptions import UserActivatedException, LicenseNotValidException
+from exceptions import CubaBaseException, UserActivatedException
 from general.forms import tenant_form, tenant_admin_form, reset_password_form, add_tenant_admin
 
 basedir = pathlib.Path(__file__).parent.parent.resolve()
@@ -34,6 +34,58 @@ def index(open_tab=False):
     if request.method == 'GET':
         data = {'open_tab': open_tab}
 
+        try:
+            # Get the key file and redirect if does not exist
+            filepath = os.path.join(basedir, 'generated_key.json')
+            if not os.path.exists(filepath):
+                return redirect(url_for('general_bp.loadkey'))
+
+            key = json.load(open(filepath))
+
+            # Get tenant profile id and fetch tenant profile data from Cuba
+            try:
+                tenant_profile = db.session.scalar(db.select(TenantProfile))
+                data['tenant_profile'] = get_tenant_profile(str(tenant_profile.id))
+            except AttributeError as exception:
+                logging.exception(f'Aception occured: {exception}')
+                flash('Профиль владельца не найден', 'error')
+
+            # Get tenant id and fetch tenant data from Cuba
+            try:
+                tenant = db.session.scalar(db.select(Tenant))
+                data['tenant'] = get_tenant(str(tenant.id))
+            except AttributeError as exception:
+                logging.exception(f'Aception occured: {exception}')
+                flash('Аккаунт владельца не найден', 'error')
+
+            # Get all admins and corresponding activation links from Cuba
+            if tenant:
+                admins = get_tenant_admins_by_tenant_id(tenant.id, page=0)
+                data['admins'] = []
+                for admin in admins:
+                    admin.admin_form = tenant_admin_form.TenantAdminForm()
+                    try:
+                        admin.activation_url = get_user_activation_link(admin.id)[2:-1]
+                    except UserActivatedException:
+                        pass
+                    data['admins'].append(admin)
+                    # init_dashboard(admin.id)
+        except CubaBaseException as exception:
+            flash(str(exception), 'error')
+
+        # Add miscellaneous data in context
+        data['tenant_form'] = tenant_form.TenantForm()
+        data['protected_data'] = jwt.decode(key.get('jwt_token'), options={"verify_signature": False})
+        data['license_status'] = date.today() < date.fromtimestamp(data['protected_data']['expires_at'])
+
+        return render_template('general/index.html', **data)
+
+
+@general_bp.route('/admins/<int:page>', methods=['GET', 'POST'])
+def admins(page):
+    data = {}
+
+    try:
         # Get the key file and redirect if does not exist
         filepath = os.path.join(basedir, 'generated_key.json')
         if not os.path.exists(filepath):
@@ -41,23 +93,15 @@ def index(open_tab=False):
 
         key = json.load(open(filepath))
 
-        # Get tenant profile id and fetch tenant profile data from Cuba
-        try:
-            tenant_profile = db.session.scalar(db.select(TenantProfile))
-            data['tenant_profile'] = get_tenant_profile(str(tenant_profile.id))
-        except AttributeError as exception:
-            logging.exception(f'Aception occured: {exception}')
-            flash('Профиль владельца не найден', 'error')
-
         # Get tenant id and fetch tenant data from Cuba
         try:
             tenant = db.session.scalar(db.select(Tenant))
             data['tenant'] = get_tenant(str(tenant.id))
         except AttributeError as exception:
             logging.exception(f'Aception occured: {exception}')
-            flash('Аккаунт владельца не найден', 'error')
+            flash('Профиль владельца не найден', 'error')
 
-        # Get all admins and corresponding activation links from Cuba
+        # Get all admin ids and fetch all admins data and corresponding activation links from Cuba
         if tenant:
             admins = get_tenant_admins_by_tenant_id(tenant.id, page=0)
             data['admins'] = []
@@ -68,52 +112,14 @@ def index(open_tab=False):
                 except UserActivatedException:
                     pass
                 data['admins'].append(admin)
-                # init_dashboard(admin.id)
-
-        # Add miscellaneous data in context
-        data['tenant_form'] = tenant_form.TenantForm()
-        data['protected_data'] = jwt.decode(key['jwt_token'], options={"verify_signature": False})
-        data['license_status'] = date.today() < date.fromtimestamp(data['protected_data']['expires_at'])
-
-        return render_template('general/index.html', **data)
-
-
-@general_bp.route('/admins/<int:page>', methods=['GET', 'POST'])
-def admins(page):
-    data = {}
-
-    # Get the key file and redirect if does not exist
-    filepath = os.path.join(basedir, 'generated_key.json')
-    if not os.path.exists(filepath):
-        return redirect(url_for('general_bp.loadkey'))
-
-    key = json.load(open(filepath))
-
-    # Get tenant id and fetch tenant data from Cuba
-    try:
-        tenant = db.session.scalar(db.select(Tenant))
-        data['tenant'] = get_tenant(str(tenant.id))
-    except AttributeError as exception:
-        logging.exception(f'Aception occured: {exception}')
-        flash('Профиль владельца не найден', 'error')
-
-    # Get all admin ids and fetch all admins data and corresponding activation links from Cuba
-    if tenant:
-        admins = get_tenant_admins_by_tenant_id(tenant.id, page=0)
-        data['admins'] = []
-        for admin in admins:
-            admin.admin_form = tenant_admin_form.TenantAdminForm()
-            try:
-                admin.activation_url = get_user_activation_link(admin.id)[2:-1]
-            except UserActivatedException:
-                pass
-            data['admins'].append(admin)
+    except CubaBaseException as exception:
+        flash(str(exception), 'error')
 
     # Add miscellaneous data in context
     data['password_reset_form'] = reset_password_form.ResetPasswordForm()
     data['add_tenant_admin_form'] = add_tenant_admin.AddTenantAdminForm()
     data['tenant_form'] = tenant_form.TenantForm()
-    data['protected_data'] = jwt.decode(key['jwt_token'], options={"verify_signature": False})
+    data['protected_data'] = jwt.decode(key.get('jwt_token'), options={"verify_signature": False})
     data['license_status'] = date.today() < date.fromtimestamp(data['protected_data']['expires_at'])
 
     return render_template('general/admins.html', **data)
@@ -124,8 +130,12 @@ def post_tenant():
     # Update tenant
     form = tenant_form.TenantForm()
 
+    # TODO: handle form invalid
     if form.validate_on_submit():
-        update_tenant(tenant_id=form.data.pop('tenant_id'), data=form.data)
+        try:
+            update_tenant(tenant_id=form.data.pop('tenant_id'), data=form.data)
+        except CubaBaseException as exception:
+            flash(str(exception), 'error')
 
     return redirect(url_for('general_bp.index'))
 
@@ -135,8 +145,12 @@ def post_admin():
     # Update tenant admin
     form = tenant_admin_form.TenantAdminForm()
 
+    # TODO: handle form invalid
     if form.validate_on_submit():
-        update_user(user_id=form.data.pop('admin_id'), data=form.data)
+        try:
+            update_user(user_id=form.data.pop('admin_id'), data=form.data)
+        except CubaBaseException as exception:
+            flash(str(exception), 'error')
     else:
         return redirect(url_for('general_bp.post_admin'))
 
@@ -149,7 +163,10 @@ def reset_password():
 
     if form.validate_on_submit():
         # Here goes the logic
-        update_password(form.data['password1'], admin_id=form.data['admin_id'])
+        try:
+            update_password(form.data['password1'], admin_id=form.data['admin_id'])
+        except CubaBaseException as exception:
+            flash(str(exception), 'error')
     else:
         return redirect(url_for('general_bp.admins', page=1))
 
@@ -167,13 +184,16 @@ def add_admin():
             flash('Владелец не найден')
             return redirect(url_for('general_bp.admins', page=1))
 
-        create_tenant_admin(
-            tenant.id,
-            first_name=form.data['first_name'],
-            last_name=form.data['last_name'],
-            email=form.data['email'],
-            phone=form.data['phone']
-        )
+        try:
+            create_tenant_admin(
+                tenant.id,
+                first_name=form.data['first_name'],
+                last_name=form.data['last_name'],
+                email=form.data['email'],
+                phone=form.data['phone']
+            )
+        except CubaBaseException as exception:
+            flash(str(exception), 'error')
 
     return redirect(url_for('general_bp.admins', page=1))
 
@@ -190,8 +210,8 @@ def loadkey():
             # Initiate Cuba with the key
             try:
                 result = init(json.load(f))
-            except LicenseNotValidException:
-                flash('Лицензия недействительна.')
+            except CubaBaseException as exception:
+                flash(str(exception), 'error')
                 return redirect(url_for('general_bp.loadkey'))
 
             tenant_profile, tenant, tenant_admin, token = result

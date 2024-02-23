@@ -4,12 +4,13 @@ from tb_rest_client.rest_client_ce import (
 )
 from tb_rest_client.rest import ApiException
 
-from . import username, password, url, logging
+from . import username, password, url, logging, check_credentials
 from .tenant import get_tenant
 from exceptions import UserActivatedException
 import json
 
 
+@check_credentials
 def get_user_activation_link(user_id):
     with RestClientCE(url) as rest_client:
         try:
@@ -24,6 +25,7 @@ def get_user_activation_link(user_id):
             logging.exception(e)
 
 
+@check_credentials
 def get_user(user_id):
     with RestClientCE(url) as rest_client:
         try:
@@ -37,6 +39,7 @@ def get_user(user_id):
             logging.exception(e)
 
 
+@check_credentials
 def update_user(user_id, data):
     with RestClientCE(url) as rest_client:
         try:
@@ -52,6 +55,7 @@ def update_user(user_id, data):
             logging.exception(e)
 
 
+@check_credentials
 def create_tenant_admin(tenant_id, **kwargs):
     with RestClientCE(url) as rest_client:
         try:
@@ -84,6 +88,7 @@ def get_user_token(admin_id):
             logging.exception(e)
 
 
+@check_credentials
 def update_password(new_password, admin_id):
     with RestClientCE(url) as rest_client:
         try:
