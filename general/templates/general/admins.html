@@ -35,14 +35,16 @@
                         <!-- Hidden password field (disabled) -->
                         {{ tenant_admin.admin_form.admin_password(value="", disabled=True, class="form-control", style="display: none") }}
                         
-                        <div>
-                            <a 
-                                class="btn btn-warning resetPassword" 
-                                id="{{ tenant_admin.id.id }}"
-                                data-firstname="{{ tenant_admin.first_name }}"
-                                data-lastname="{{ tenant_admin.last_name }}"
-                            >Восстановить пароль</a>
-                        </div>
+                        {% if not tenant_admin.activation_url %}
+                            <div>
+                                <a 
+                                    class="btn btn-warning resetPassword" 
+                                    id="{{ tenant_admin.id.id }}"
+                                    data-firstname="{{ tenant_admin.first_name }}"
+                                    data-lastname="{{ tenant_admin.last_name }}"
+                                >Восстановить пароль</a>
+                            </div>
+                        {% endif %}
 
                         <div>
                             {{tenant_admin.admin_form.submit(class="btn btn-primary")}}
