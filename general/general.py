@@ -150,7 +150,9 @@ def post_admin():
     # TODO: handle form invalid
     if form.validate_on_submit():
         try:
+            default_user_settings()
             update_user(user_id=form.data.pop('admin_id'), data=form.data)
+            default_user_settings()
         except CubaBaseException as exception:
             flash(str(exception), 'error')
     else:
@@ -166,8 +168,8 @@ def reset_password():
     if form.validate_on_submit():
         # Here goes the logic
         try:
-            default_user_settings()
             update_password(form.data['password1'], admin_id=form.data['admin_id'])
+            default_user_settings
         except CubaBaseException as exception:
             flash(str(exception), 'error')
     else:
@@ -207,14 +209,10 @@ def loadkey():
         # There should be a generated_key file in POST request
         f = request.files['generated_key']
         f.save(os.path.join(basedir, 'generated_key.json'))
-        p = default_user_settings()
-        print(p)
         with open('generated_key.json', 'r') as f:
 
             # Initiate Cuba with the key
             try:
-                p = default_user_settings()
-                print(p)
                 result = init(json.load(f))
             except CubaBaseException as exception:
                 flash(str(exception), 'error')
