@@ -116,7 +116,8 @@ def save_user_security_settings(password_policy):
             rest_client.login(username=username, password=password)
             security_settings = rest_client.save_security_settings(SecuritySettings(
                                                                 password_policy=password_policy,
-                                                                max_failed_login_attempts=0))
+                                                                max_failed_login_attempts=1))
+            print("\nNew security settings applied:\n", security_settings)
             return security_settings
 
         except ApiException as e:
@@ -130,6 +131,22 @@ def change_password_policy(admin_id):
             token = rest_client.get_user_token(UserId(id=admin_id, entity_type='USER'))
             rest_client.token_login(token)
             user = rest_client.get_user_by_id(admin_id)
+            # Check if failedLoginAttempts is more than 0
+            security_settings = save_user_security_settings({
+                "allowWhitespaces": False,
+                "forceUserToResetPasswordIfNotValid": True,
+                "maximumLength": 12,
+                "minimumDigits": 1,
+                "minimumLength": 8,
+                "minimumLowercaseLetters": 1,
+                "minimumSpecialCharacters": 1,
+                "minimumUppercaseLetters": 1,
+                "passwordExpirationPeriodDays": -1,
+                "passwordReuseFrequencyDays": 365
+            })
+            print("\nNew security settings applied:\n", security_settings)
+
+            # Update the user's additional info
             user.additional_info = {
                 "passwordPolicy": {
                     "allowWhitespaces": False,
@@ -145,26 +162,8 @@ def change_password_policy(admin_id):
                 },
                 "maxFailedLoginAttempts": 0,
             }
+            # Save the updated user
             rest_client.save_user(user)
-            # return user
-            # rest_client.set_user_credentials_enabled(user_id=admin_id, user_credentials_enabled=False)
-            # new_password_policy = rest_client.put_user_settings({
-            #             'allow_whitespaces': False,
-            #             'force_user_to_reset_password_if_not_valid': True,
-            #             'maximum_length': 6,
-            #             'minimum_digits': 0,
-            #             'minimum_length': 0,
-            #             'minimum_lowercase_letters': 0,
-            #             'minimum_special_characters': 0,
-            #             'minimum_uppercase_letters': 0,
-            #             'password_expiration_period_days': -1,
-            #             'password_reuse_frequency_days': 0
-            #             # "max_failed_login_attempts": -1
-            #             }
-            #         )
-            # logging.info(new_password_policy)
-            # return new_password_policy
-
         except ApiException as e:
             logging.exception(e)
 
@@ -200,8 +199,7 @@ def default_user_settings():
                                                                     }
                                                         )
                                                     )
-            # print(new_password_policy)
-            print("\n This is new security settings", new_security_settings)
+            print("\n This is my new security\n", new_security_settings)
 
         except ApiException as e:
             logging.exception(e)
@@ -221,29 +219,28 @@ def update_password(new_password, admin_id):
             print(security_settings)
             change_password_policy(admin_id)
             print(get_user(admin_id))
-
+            print("\n", user_info.email)
             rest_client.login(username=user_info.email, password="dhacda")
             print("\n")
         except ApiException as e:
             print(e)
             # Check if the ApiException contains information about expired credentials
             if e.status == 401:
-                if 'resetToken' in e.body:
-                    reset_token = e.body['resetToken']
-                    # Handle the reset token as needed
-                    print("Reset Token:", reset_token)
-                    # rest_client.check_reset_token(reset_token=reset_token)
-                    changed_password_request = ResetPasswordRequest(reset_token=reset_token, new_password=new_password)
-                    response = rest_client.reset_password(changed_password_request)
-                    # return rest_client.save_user(User(id=UserId(id=admin_id)), send_activation_mail=False)
-                    if response.status == 200:
-                        print("Password reset successful.")
-                        default_user_settings()
-                        return True
-                    else:
-                        print("Password reset failed.")
-                        default_user_settings()
-                        return False
+                reset_token = e.body['resetToken']
+                # Handle the reset token as needed
+                print("Reset Token:", reset_token)
+                # rest_client.check_reset_token(reset_token=reset_token)
+                changed_password_request = ResetPasswordRequest(reset_token=reset_token, new_password=new_password)
+                response = rest_client.reset_password(changed_password_request)
+                # return rest_client.save_user(User(id=UserId(id=admin_id)), send_activation_mail=False)
+                if response.status == 200:
+                    print("Password reset was successful.")
+                    default_user_settings()
+                    return True
+                else:
+                    print("Password reset failed.")
+                    default_user_settings()
+                    return False
             else:
                 print("\nReset Token was not found\n")
                 # Handle other ApiException cases if needed
@@ -252,7 +249,6 @@ def update_password(new_password, admin_id):
             # user = rest_client.get_user()
             # print(rest_client.get_user_password_policy())
             # print(rest_client.get_user_settings())
-            # print(rest_client.getsett)
             # print(user.discriminator)
             # print(rest_client.get_user_settings())
             # print('ACTIVATION', rest_client.get_activation_link(UserId(id=admin_id, entity_type='USER')))
