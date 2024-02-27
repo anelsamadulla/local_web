@@ -186,17 +186,12 @@ def init_dashboard(token, refresh_token):
                 device_name = f"camera{i}"
                 device = Device(name=device_name, device_profile_id=device_profile.id)
                 device = rest_client.save_device(device)
-                device_id = rest_client.get_device_by_id(device_id=device.id.id)
-                devices.append(device_id)
-                # logging.info(f"Device {device_id} was created:\n%r\n", device_id)
+                devices.append(device)
 
             # Save the list of device IDs to a text file
-            entity_list = []
-            for device in devices:
-                entity_list.append(str(device.id.id))
-
+            entity_list = [str(device.id.id) for device in devices]
             print(entity_list)
-            # Load dashboard configuration from JSON file
+
             # Load existing dashboard configuration
             config_file_path2 = os.path.join(basedir, 'default_dashboard.json')
             with open(config_file_path2, 'r') as config_file:
@@ -205,12 +200,16 @@ def init_dashboard(token, refresh_token):
             # Get the existing entityList
             existing_entity_list = dashboard_config["configuration"]["entityAliases"]["1b22ed84-17fd-7197-96f3-bd0778a3daa2"]["filter"]["entityList"]
 
-            # Convert the existing entityList from JSON to a Python list
-            existing_entity_list = json.loads(existing_entity_list)
-
-            # Add the newly created device IDs to the existing entityList
-            for device in devices:
-                existing_entity_list.append(str(device.id.id))
+            if isinstance(existing_entity_list, list):
+                # If it's already a list, we can directly manipulate it
+                entity_list = [str(device.id.id) for device in devices]
+                existing_entity_list.extend(entity_list)
+            else:
+                # If it's a string, load it as JSON
+                existing_entity_list = json.loads(existing_entity_list)
+                # Add the newly created device IDs to the existing entityList
+                for device in devices:
+                    existing_entity_list.append(str(device.id.id))
 
             # Convert the merged entityList back to JSON
             merged_entity_list_json = json.dumps(existing_entity_list)
@@ -218,14 +217,16 @@ def init_dashboard(token, refresh_token):
             # Update the dashboard configuration with the merged entityList
             dashboard_config["configuration"]["entityAliases"]["1b22ed84-17fd-7197-96f3-bd0778a3daa2"]["filter"]["entityList"] = merged_entity_list_json
 
+            # Create a new dashboard object with the updated configuration
             dashboard = Dashboard(
-                    name=dashboard_config["name"],
-                    title=dashboard_config["title"],
-                    configuration=dashboard_config["configuration"]
-                )
+                name=dashboard_config["name"],
+                title=dashboard_config["title"],
+                configuration=dashboard_config["configuration"]
+            )
 
+            # Save the updated dashboard
             dashboard = rest_client.save_dashboard(dashboard)
-            logging.info("Dashboard was created:\n\n")
+            logging.info("Dashboard was created:\n%r\n", dashboard)
             # print(dashboard.to_str())
 
         except ApiException as e:

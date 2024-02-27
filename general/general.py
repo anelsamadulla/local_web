@@ -169,7 +169,7 @@ def reset_password():
         # Here goes the logic
         try:
             update_password(form.data['password1'], admin_id=form.data['admin_id'])
-            default_user_settings
+            default_user_settings()
         except CubaBaseException as exception:
             flash(str(exception), 'error')
     else:

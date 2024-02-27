@@ -201,7 +201,7 @@ def default_user_settings():
                                                         )
                                                     )
             # print(new_password_policy)
-            print(new_security_settings)
+            print("\n This is new security settings", new_security_settings)
 
         except ApiException as e:
             logging.exception(e)
