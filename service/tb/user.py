@@ -103,7 +103,7 @@ def update_password(new_password, admin_id):
             user="postgres",
             host="localhost",
             password="postgres",
-            port=32772
+            port=5432
         )
         cur = conn.cursor()
         cur.execute(

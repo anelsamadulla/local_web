@@ -11,7 +11,7 @@ from flask import Blueprint, redirect, render_template, request, url_for, abort,
 from service.tb import init, init_dashboard
 from service.tb.user import (
                             get_user_activation_link, update_user, update_password,
-                            create_tenant_admin, default_user_settings)
+                            create_tenant_admin)
 from service.tb.tenant_profile import get_tenant_profile
 from service.tb.tenant import get_tenant, update_tenant, get_tenant_admins_by_tenant_id
 from models import TenantProfile, Tenant, TenantAdmin
@@ -150,9 +150,7 @@ def post_admin():
     # TODO: handle form invalid
     if form.validate_on_submit():
         try:
-            default_user_settings()
             update_user(user_id=form.data.pop('admin_id'), data=form.data)
-            default_user_settings()
         except CubaBaseException as exception:
             flash(str(exception), 'error')
     else:
@@ -169,7 +167,6 @@ def reset_password():
         # Here goes the logic
         try:
             update_password(form.data['password1'], admin_id=form.data['admin_id'])
-            default_user_settings()
         except CubaBaseException as exception:
             flash(str(exception), 'error')
     else:
