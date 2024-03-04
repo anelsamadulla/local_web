@@ -53,6 +53,25 @@
                 </form>
             </div>
         {% endfor %}
+
+        {% if total_pages > 1 %}
+            <nav aria-label="Page navigation example">
+                <ul class="pagination">
+                    <li class="page-item">
+                        <a class="page-link {% if curr_page==1 %}disabled{% endif %}" href="{{ url_for('general_bp.admins', page=curr_page-1) }}">Previous</a>
+                    </li>
+                    {% for page in range(1, total_pages+1) %}
+                        <li class="page-item {% if page==curr_page %}disabled{% endif %}">
+                            <a class="page-link" href="{{ url_for('general_bp.admins', page=page) }}">{{ page }}</a>
+                        </li>
+
+                    {% endfor %}
+                    <li class="page-item">
+                        <a class="page-link {% if not has_next %}disabled{% endif %}" href="{{ url_for('general_bp.admins', page=curr_page+1)}}">Next</a>
+                    </li>
+                </ul>
+            </nav>
+        {% endif %}
     </div>
     
     <div class="modal" id="modal">
@@ -126,7 +145,7 @@
         </div>
     </div>
 
-    
+
 {% endblock %}
 
 {% block endscripts %}

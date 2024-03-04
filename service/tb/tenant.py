@@ -38,14 +38,14 @@ def update_tenant(tenant_id: str, data):
 
 
 @check_credentials
-def get_tenant_admins_by_tenant_id(tenant_id, page):
+def get_tenant_admins_by_tenant_id(tenant_id, page, page_size=999):
     with RestClientCE(url) as rest_client:
         try:
             rest_client.login(username=username, password=password)
 
-            admins = rest_client.get_tenant_admins(tenant_id=tenant_id, page_size=10, page=page)
-            # print(admins)
-            return admins.data
+            admins = rest_client.get_tenant_admins(tenant_id=tenant_id, page_size=page_size, page=page)
+
+            return (admins.data, admins.total_pages, admins.has_next)
 
         except ApiException as e:
             logging.exception(e)

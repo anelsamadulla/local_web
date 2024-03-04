@@ -62,7 +62,7 @@ def index(open_tab=False):
 
             # Get all admins and corresponding activation links from Cuba
             if tenant:
-                admins = get_tenant_admins_by_tenant_id(tenant.id, page=0)
+                admins, *_ = get_tenant_admins_by_tenant_id(tenant.id, page=0)
                 data['admins'] = []
                 for admin in admins:
                     admin.admin_form = tenant_admin_form.TenantAdminForm()
@@ -105,7 +105,10 @@ def admins(page):
 
         # Get all admin ids and fetch all admins data and corresponding activation links from Cuba
         if tenant:
-            admins = get_tenant_admins_by_tenant_id(tenant.id, page=0)
+            admins, total_pages, has_next = get_tenant_admins_by_tenant_id(tenant.id, page=page-1, page_size=5)
+            data['total_pages'] = total_pages
+            data['has_next'] = has_next
+            data['curr_page'] = page
             data['admins'] = []
             for admin in admins:
                 admin.admin_form = tenant_admin_form.TenantAdminForm()

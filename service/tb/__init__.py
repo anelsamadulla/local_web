@@ -21,7 +21,7 @@ logging.basicConfig(level=logging.DEBUG,
                     datefmt='%Y-%m-%d %H:%M:%S')
 
 # ThingsBoard REST API URL
-url = "http://192.168.11.106:8080"
+url = "localhost"
 
 # Default Tenant Administrator credentials
 username = "sysadmin@thingsboard.org"
