@@ -117,3 +117,23 @@ def update_password(new_password, admin_id):
     finally:
         cur.close()
         conn.close()
+
+
+@check_credentials
+def set_user_credentials_enabled(user_id: str, enabled: bool):
+    with RestClientCE(url) as rest_client:
+        try:
+            rest_client.login(username=username, password=password)
+            rest_client.set_user_credentials_enabled(UserId(user_id, "USER"), enabled)
+        except ApiException as e:
+            logging.exception(e)
+
+
+@check_credentials
+def delete_user(user_id: str):
+    with RestClientCE(url) as rest_client:
+        try:
+            rest_client.login(username=username, password=password)
+            rest_client.delete_user(UserId(user_id, 'USER'))
+        except ApiException as e:
+            logging.exception(e)

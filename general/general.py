@@ -10,8 +10,9 @@ import logging
 from flask import Blueprint, redirect, render_template, request, url_for, abort, flash
 from service.tb import init, init_dashboard
 from service.tb.user import (
-                            get_user_activation_link, update_user, update_password,
-                            create_tenant_admin)
+    get_user_activation_link, update_user, update_password, create_tenant_admin, set_user_credentials_enabled,
+    delete_user
+)
 from service.tb.tenant_profile import get_tenant_profile
 from service.tb.tenant import get_tenant, update_tenant, get_tenant_admins_by_tenant_id
 from models import TenantProfile, Tenant, TenantAdmin
@@ -201,6 +202,21 @@ def add_admin():
             flash(str(exception), 'error')
 
     return redirect(url_for('general_bp.admins', page=1))
+
+
+@general_bp.route('/update_tenant_admin_cledentials/<string:user_id>/<string:enable>', methods=['GET'])
+def update_tenant_admin_credentials(user_id, enable):
+    if request.method == 'GET':
+        enable = True if enable == 'true' else False
+        set_user_credentials_enabled(user_id, enable)
+        return redirect(url_for('general_bp.admins', page=1))
+
+
+@general_bp.route('/delete_tenant_admin/<string:user_id>', methods=['GET'])
+def delete_tenant_admin(user_id):
+    if request.method == 'GET':
+        delete_user(user_id)
+        return redirect(url_for('general_bp.admins', page=1))
 
 
 @general_bp.route('/loadkey', methods=['GET', 'POST'])
