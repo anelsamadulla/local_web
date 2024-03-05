@@ -8,4 +8,4 @@ class AddTenantAdminForm(FlaskForm):
     last_name = StringField('Фамилия', validators=(InputRequired('Это поле обязательно'), ))
     email = EmailField('Электронная почта')
     phone = StringField('Номер телефона')
-    submit = SubmitField('Обновить')
+    submit = SubmitField('Добавить')
