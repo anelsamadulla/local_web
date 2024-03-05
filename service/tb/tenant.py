@@ -45,6 +45,9 @@ def get_tenant_admins_by_tenant_id(tenant_id, page, page_size=999):
 
             admins = rest_client.get_tenant_admins(tenant_id=tenant_id, page_size=page_size, page=page)
 
+            for admin in admins.data:
+                print(admin, '\n\n')
+
             return (admins.data, admins.total_pages, admins.has_next)
 
         except ApiException as e:

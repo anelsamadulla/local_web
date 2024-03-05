@@ -127,3 +127,9 @@ form .form-inputs .fit-width {
     gap: 5px;
     align-items: center;
 }
+
+.admin_icons {
+    position: absolute;
+    top: 25px;
+    right: 25px;
+}

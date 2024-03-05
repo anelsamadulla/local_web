@@ -4,7 +4,22 @@
     <div class="container column">
         {% for tenant_admin in admins %}
             <div class="container">
-                <form action="{{ url_for('general_bp.post_admin') }}" method="POST" class="form tenant-admin card">
+                <form action="{{ url_for('general_bp.post_admin') }}" method="POST" id="{{ tenant_admin.id.id }}" class="form tenant-admin card">
+                    <div class="admin_icons flex flex-row">
+                        {% if tenant_admin.additional_info.userCredentialsEnabled %}
+                            <a href="{{ url_for('general_bp.update_tenant_admin_credentials', user_id=tenant_admin.id.id, enable=false) }}">
+                                <img style="width: 50px; height: 50px;" src="{{ url_for('static', filename='img/suspend.png') }}" alt="Деактивировать">
+                            </a>
+                        {% else %}
+                            <a href="{{ url_for('general_bp.update_tenant_admin_credentials', user_id=tenant_admin.id.id, enable=true) }}">
+                                <img style="width: 50px; height: 50px;" src="{{ url_for('static', filename='img/activate.png') }}" alt="Активировать">
+                            </a>
+                        {% endif %}
+                        <a href="{{ url_for('general_bp.delete_tenant_admin', user_id=tenant_admin.id.id) }}">
+                            <img style="width: 50px; height: 50px;" src="{{ url_for('static', filename='img/delete.png') }}" alt="Удалить">
+                        </a>
+
+                    </div>
                     <h4>Администратор владельца{% if tenant_admin.activation_url %}<b> Не активирован</b>{% endif %}</h4>
                     {% if tenant_admin.activation_url %}
                         <a class="activation-link center" href="{{ tenant_admin.activation_url }}" target="_blank">Активировать</a>

@@ -207,9 +207,9 @@ def add_admin():
 @general_bp.route('/update_tenant_admin_cledentials/<string:user_id>/<string:enable>', methods=['GET'])
 def update_tenant_admin_credentials(user_id, enable):
     if request.method == 'GET':
-        enable = True if enable == 'true' else False
+        enable = True if enable == 'True' else False
         set_user_credentials_enabled(user_id, enable)
-        return redirect(url_for('general_bp.admins', page=1))
+        return redirect(url_for('general_bp.admins', page=1)+f'#{user_id}')
 
 
 @general_bp.route('/delete_tenant_admin/<string:user_id>', methods=['GET'])
