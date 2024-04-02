@@ -1,5 +1,5 @@
 {
-  "title": "default_dashboard",
+  "title": "Демонстрационный дешборд камеры",
   "image": null,
   "mobileHide": false,
   "mobileOrder": null,
@@ -68,7 +68,7 @@
             {
               "type": "entity",
               "name": null,
-              "entityAliasId": "1b22ed84-17fd-7197-96f3-bd0778a3daa2",
+              "entityAliasId": "6d09f096-7f51-4156-664d-e99a851bbb5a",
               "filterId": null,
               "dataKeys": [
                 {
@@ -225,7 +225,7 @@
             {
               "type": "entity",
               "name": null,
-              "entityAliasId": "1b22ed84-17fd-7197-96f3-bd0778a3daa2",
+              "entityAliasId": "6d09f096-7f51-4156-664d-e99a851bbb5a",
               "filterId": null,
               "dataKeys": [
                 {
@@ -284,31 +284,20 @@
               "limit": 25000
             }
           },
-          "showTitle": true,
+          "showTitle": false,
           "backgroundColor": "#fff",
           "color": "rgba(0, 0, 0, 0.87)",
           "padding": "8px",
           "settings": {
             "provider": "openstreet-map",
-            "gmApiKey": "AIzaSyDoEx2kaGz3PxwbI9T7ccTSg5xjdw8Nw8Q",
-            "gmDefaultMapType": "roadmap",
             "mapProvider": "OpenStreetMap.Mapnik",
             "useCustomProvider": false,
             "customProviderTileUrl": "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-            "mapProviderHere": "HERE.normalDay",
-            "credentials": {
-              "app_id": "AhM6TzD9ThyK78CT3ptx",
-              "app_code": "p6NPiITB3Vv0GMUFnkLOOg",
-              "useV3": false
-            },
-            "mapImageUrl": "tb-image:bGFiZWxfd2lkZ2V0X3N5c3RlbV93aWRnZXRfYmFja2dyb3VuZC5zdmc=:IkxhYmVsIHdpZGdldCIgc3lzdGVtIHdpZGdldCBiYWNrZ3JvdW5k;data:image/svg+xml;base64,PHN2ZyBpZD0ic3ZnMiIgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iMTAwIiB3aWR0aD0iMTAwIiB2ZXJzaW9uPSIxLjEiIHhtbG5zOmNjPSJodHRwOi8vY3JlYXRpdmVjb21tb25zLm9yZy9ucyMiIHhtbG5zOmRjPSJodHRwOi8vcHVybC5vcmcvZGMvZWxlbWVudHMvMS4xLyIgdmlld0JveD0iMCAwIDEwMCAxMDAiPgogPGcgaWQ9ImxheWVyMSIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMCAtOTUyLjM2KSI+CiAgPHJlY3QgaWQ9InJlY3Q0Njg0IiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBoZWlnaHQ9Ijk5LjAxIiB3aWR0aD0iOTkuMDEiIHN0cm9rZT0iIzAwMCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiB5PSI5NTIuODYiIHg9Ii40OTUwNSIgc3Ryb2tlLXdpZHRoPSIuOTkwMTAiIGZpbGw9IiNlZWUiLz4KICA8dGV4dCBpZD0idGV4dDQ2ODYiIHN0eWxlPSJ3b3JkLXNwYWNpbmc6MHB4O2xldHRlci1zcGFjaW5nOjBweDt0ZXh0LWFuY2hvcjptaWRkbGU7dGV4dC1hbGlnbjpjZW50ZXIiIGZvbnQtd2VpZ2h0PSJib2xkIiB4bWw6c3BhY2U9InByZXNlcnZlIiBmb250LXNpemU9IjEwcHgiIGxpbmUtaGVpZ2h0PSIxMjUlIiB5PSI5NzAuNzI4MDkiIHg9IjQ5LjM5NjQ3NyIgZm9udC1mYW1pbHk9IlJvYm90byIgZmlsbD0iIzY2NjY2NiI+PHRzcGFuIGlkPSJ0c3BhbjQ2OTAiIHg9IjUwLjY0NjQ3NyIgeT0iOTcwLjcyODA5Ij5JbWFnZSBiYWNrZ3JvdW5kIDwvdHNwYW4+PHRzcGFuIGlkPSJ0c3BhbjQ2OTIiIHg9IjQ5LjM5NjQ3NyIgeT0iOTgzLjIyODA5Ij5pcyBub3QgY29uZmlndXJlZDwvdHNwYW4+PC90ZXh0PgogIDxyZWN0IGlkPSJyZWN0NDY5NCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgaGVpZ2h0PSIxOS4zNiIgd2lkdGg9IjY5LjM2IiBzdHJva2U9IiMwMDAiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgeT0iOTkyLjY4IiB4PSIxNS4zMiIgc3Ryb2tlLXdpZHRoPSIuNjM5ODYiIGZpbGw9Im5vbmUiLz4KIDwvZz4KPC9zdmc+Cg==",
-            "tmApiKey": "84d6d83e0e51e481e50454ccbe8986b",
-            "tmDefaultMapType": "roadmap",
             "latKeyName": "latitude",
             "lngKeyName": "longitude",
             "xPosKeyName": "xPos",
             "yPosKeyName": "yPos",
-            "defaultZoomLevel": 11,
+            "defaultZoomLevel": 13,
             "defaultCenterPosition": "51.166916, 71.422308",
             "disableScrollZooming": false,
             "disableDoubleClickZooming": false,
@@ -323,17 +312,22 @@
             "showLabel": true,
             "useLabelFunction": false,
             "label": "${entityName}",
+            "labelFunction": null,
             "showTooltip": true,
             "showTooltipAction": "click",
             "autocloseTooltip": true,
             "useTooltipFunction": false,
             "tooltipPattern": "<b>${entityName}</b><br/><br/><b>Latitude:</b> ${latitude:7}<br/><b>Longitude:</b> ${longitude:7}<br/><b>Place:</b> ${place}<br/><br/><link-act name='delete'>Delete</link-act>",
+            "tooltipFunction": null,
             "tooltipOffsetX": 0,
             "tooltipOffsetY": -1,
             "color": "#fe7569",
             "useColorFunction": false,
+            "colorFunction": null,
             "useMarkerImageFunction": false,
+            "markerImage": null,
             "markerImageSize": 34,
+            "markerImageFunction": null,
             "markerImages": [],
             "showPolygon": false,
             "polygonKeyName": "coordinates",
@@ -341,36 +335,44 @@
             "showPolygonLabel": false,
             "usePolygonLabelFunction": false,
             "polygonLabel": "${entityName}",
+            "polygonLabelFunction": null,
             "showPolygonTooltip": false,
             "showPolygonTooltipAction": "click",
             "autoClosePolygonTooltip": true,
             "usePolygonTooltipFunction": false,
             "polygonTooltipPattern": "<b>${entityName}</b><br/><br/><b>TimeStamp:</b> ${coordinates|ts:7}<br/><br/><link-act name='delete'>Delete</link-act>",
+            "polygonTooltipFunction": null,
             "polygonColor": "#3388ff",
             "polygonOpacity": 0.5,
             "usePolygonColorFunction": false,
+            "polygonColorFunction": null,
             "polygonStrokeColor": "#3388ff",
             "polygonStrokeOpacity": 1,
             "polygonStrokeWeight": 1,
             "usePolygonStrokeColorFunction": false,
+            "polygonStrokeColorFunction": null,
             "showCircle": false,
             "circleKeyName": "perimeter",
             "editableCircle": false,
             "showCircleLabel": false,
             "useCircleLabelFunction": false,
             "circleLabel": "${entityName}",
+            "circleLabelFunction": null,
             "showCircleTooltip": false,
             "showCircleTooltipAction": "click",
             "autoCloseCircleTooltip": true,
             "useCircleTooltipFunction": false,
             "circleTooltipPattern": "<b>${entityName}</b><br/><br/><b>TimeStamp:</b> ${ts:7}",
+            "circleTooltipFunction": null,
             "circleFillColor": "#3388ff",
             "circleFillColorOpacity": 0.2,
             "useCircleFillColorFunction": false,
+            "circleFillColorFunction": null,
             "circleStrokeColor": "#3388ff",
             "circleStrokeOpacity": 1,
             "circleStrokeWeight": 3,
             "useCircleStrokeColorFunction": false,
+            "circleStrokeColorFunction": null,
             "snappable": false,
             "initDragMode": false,
             "hideAllControlButton": false,
@@ -379,13 +381,15 @@
             "hideRemoveControlButton": false,
             "useClusterMarkers": false,
             "zoomOnClick": true,
+            "maxZoom": null,
             "maxClusterRadius": 80,
             "animate": true,
             "spiderfyOnMaxZoom": false,
             "showCoverageOnHover": true,
             "chunkedLoading": false,
             "removeOutsideVisibleBounds": true,
-            "useIconCreateFunction": false
+            "useIconCreateFunction": false,
+            "clusterMarkerFunction": null
           },
           "title": "New Markers Placement",
           "dropShadow": true,
@@ -654,21 +658,16 @@
           "defaultStateEntity": null
         }
       },
-      "1b22ed84-17fd-7197-96f3-bd0778a3daa2": {
-        "id": "1b22ed84-17fd-7197-96f3-bd0778a3daa2",
-        "alias": "Example_cameras",
+      "6d09f096-7f51-4156-664d-e99a851bbb5a": {
+        "id": "6d09f096-7f51-4156-664d-e99a851bbb5a",
+        "alias": "Камеры",
         "filter": {
-          "type": "entityList",
+          "type": "deviceType",
           "resolveMultiple": true,
-          "entityType": "DEVICE",
-          "entityList": [
-            "89c4ba10-c180-11ee-8724-cf1a1d8fc574",
-            "98cd2560-c180-11ee-8724-cf1a1d8fc574",
-            "a20bc8c0-c180-11ee-8724-cf1a1d8fc574",
-            "0dc8cfb0-c968-11ee-b2aa-7f7883c7600d",
-            "16fb8c30-c968-11ee-b2aa-7f7883c7600d",
-            "1efe0610-c968-11ee-b2aa-7f7883c7600d"
-          ]
+          "deviceTypes": [
+            "demo_camera_profile"
+          ],
+          "deviceNameFilter": ""
         }
       }
     },
@@ -710,5 +709,5 @@
       "dashboardCss": "\n.tb-widget-container > .tb-widget .tb-markdown-view .tb-progress-cover, .tb-widget-container > .tb-widget .tb-markdown-view .mat-drawer-container {\n    background-color: #fff;\n}\n\n.tb-dashboard-page.dark .tb-widget-container > .tb-widget .tb-markdown-view .tb-progress-cover, .tb-dashboard-page.dark .tb-widget-container > .tb-widget .tb-markdown-view .mat-drawer-container {\n    background: #0D2743;\n}\n\n.tb-dashboard-page.dark .tb-widget-container > .tb-widget .tb-widget-loading {\n    background: rgba(13, 39, 67, 0.15);\n}\n\n\n.tb-dashboard-page.dark .tb-widget-container > .tb-widget img.leaflet-tile {\n    filter: invert(1) saturate(0) brightness(2);\n}\n\n.tb-dashboard-page.dark .tb-widget-container > .tb-widget .leaflet-tile-pane {\n    opacity: 0.4;\n}\n\n\n.tb-dashboard-page.dark .tb-widget-container > .tb-widget .leaflet-container {\n    background-color: #0D2743;\n}\n\n.tb-dashboard-page.dark .tb-widget-container > .tb-widget .leaflet-control-container + div {\n    background-color: rgba(13, 39, 67, 0.7) !important;\n}\n\n\n.tb-widget-container > .tb-widget {\n    border-radius: 8px;\n}\n\ngridster-item:not(.tb-noselect) > .tb-widget-container > .tb-widget {\n    cursor: default !important;\n}\n\n.tb-widget-container > .tb-widget .tb-table-widget .mat-mdc-row {\n    cursor: pointer;\n}\n\n.tb-widget-container > .tb-widget .tb-legend-keys {\n    cursor: pointer;\n}\n\n.tb-dashboard-page.dark tb-dashboard > div {\n    background-color: #0A1F36 !important; /* rgb(238, 238, 238)*/\n}\n\n.tb-dashboard-page.dark .tb-widget-container > .tb-widget {\n    background: #0D2743 !important;\n    color: rgba(255, 255, 255, 0.87) !important;\n}\n\n/* Custom changes*/\n.tb-dashboard-page.dark .tb-widget-container > .tb-widget input{\n    color: rgba(255, 255, 255, 0.87) !important;\n}\n\n.tb-dashboard-page.dark .tb-widget-container > .tb-widget label{\n    color: rgba(255, 255, 255, 0.87) !important;\n}\n/* Custom changes*/\n\n.tb-dashboard-page.dark .tb-widget-container > .tb-widget .flot-text {\n    color: rgba(255, 255, 255, 0.87) !important;\n}\n\n.tb-dashboard-page.dark .tb-widget-container > .tb-widget .flot-text > div > div {\n    color: rgba(255, 255, 255, 0.87) !important;\n}\n\n.tb-dashboard-page.dark .tb-widget-container > .tb-widget .tb-table-widget .mat-mdc-table .mat-mdc-header-row {\n    background-color: #0D2743 !important;\n}\n\n.tb-dashboard-page.dark .tb-widget-container > .tb-widget .tb-table-widget .mat-mdc-table .mat-mdc-header-cell.mat-mdc-table-sticky {\n    background-color: #0D2743 !important;\n}\n\n.tb-dashboard-page.dark .tb-widget-container > .tb-widget .tb-table-widget .mat-mdc-table .mat-mdc-row .mat-mdc-cell.mat-mdc-table-sticky {\n    background-color: #0D2743 !important;\n}\n\n.tb-dashboard-page.dark .tb-widget-container > .tb-widget .tb-table-widget .mat-mdc-table .mat-mdc-header-cell {\n    color: rgba(255, 255, 255, 0.87) !important;\n    border-bottom-color: rgba(255, 255, 255, 0.2) !important;\n}\n\n.tb-dashboard-page.dark .tb-widget-container > .tb-widget .tb-table-widget .mat-mdc-table .mat-mdc-cell {\n    color: rgba(255, 255, 255, 0.87) !important;\n    border-bottom-color: rgba(255, 255, 255, 0.2) !important;\n}\n\n.tb-dashboard-page.dark .tb-widget-container > .tb-widget .tb-table-widget .mat-mdc-table .mat-mdc-header-cell .mat-sort-header-arrow {\n    color: rgba(255, 255, 255, 0.57) !important;\n}\n\n.tb-dashboard-page.dark .tb-widget-container > .tb-widget .tb-table-widget .mat-divider {\n    border-top-color: rgba(255, 255, 255, 0.2) !important;\n}\n\n.tb-dashboard-page.dark .tb-widget-container > .tb-widget .tb-table-widget .mat-mdc-input-element::placeholder {\n    color: rgba(255, 255, 255, 0.57) !important;\n}\n\n.tb-dashboard-page.dark .tb-widget-container > .tb-widget .tb-table-widget .mat-mdc-input-element::-moz-placeholder {\n    color: rgba(255, 255, 255, 0.57) !important;\n}\n\n.tb-dashboard-page.dark .tb-widget-container > .tb-widget .tb-table-widget .mat-mdc-input-element::-webkit-input-placeholder {\n    color: rgba(255, 255, 255, 0.57) !important;\n}\n\n.tb-dashboard-page.dark .tb-widget-container > .tb-widget .tb-table-widget .mat-mdc-input-element:-ms-input-placeholder {\n    color: rgba(255, 255, 255, 0.57) !important;\n}\n\n\n.tb-dashboard-page.dark .tb-widget-container > .tb-widget .tb-table-widget .mat-mdc-table .mat-mdc-cell .mdc-checkbox__background,.tb-dashboard-page.dark .tb-widget-container > .tb-widget .tb-table-widget .mat-mdc-table .mat-mdc-header-cell .mdc-checkbox__background {\n    border-color : rgba(255, 255, 255, 0.57) !important;\n}\n\n.tb-dashboard-page.dark .tb-widget-container > .tb-widget .tb-table-widget .mat-mdc-table .mat-mdc-cell button.mat-mdc-icon-button mat-icon {\n    color : rgba(255, 255, 255, 0.57) !important;\n}\n\n.tb-dashboard-page.dark .tb-widget-container > .tb-widget .tb-table-widget mat-toolbar.mat-mdc-table-toolbar:not([color=\"primary\"]) button.mat-mdc-icon-button mat-icon {\n    color : rgba(255, 255, 255, 0.57) !important;\n}\n\n.tb-dashboard-page.dark .tb-widget-container > .tb-widget .tb-table-widget .mat-mdc-table .mat-mdc-cell button.mat-mdc-icon-button[disabled][disabled] mat-icon {\n    color : rgba(255, 255, 255, 0.2) !important;\n}\n\n.tb-dashboard-page.dark .tb-widget-container > .tb-widget .tb-table-widget .mat-mdc-paginator {\n    color: rgba(255, 255, 255, 0.57) !important;\n}\n\n.tb-dashboard-page.dark .tb-widget-container > .tb-widget button.mat-mdc-icon-button mat-icon,\n.tb-dashboard-page.dark .tb-widget-container > .tb-widget button.mat-mdc-icon-button,\n.tb-dashboard-page.dark .tb-widget-container > .tb-widget .tb-table-widget .mat-mdc-paginator button.mat-mdc-icon-button {\n    color : rgba(255, 255, 255, 0.57) !important;\n}\n\n.tb-dashboard-page.dark .tb-widget-container > .tb-widget button.mat-mdc-icon-button[disabled][disabled],\n.tb-dashboard-page.dark .tb-widget-container > .tb-widget .tb-table-widget .mat-mdc-paginator button.mat-mdc-icon-button[disabled][disabled] {\n    color : rgba(255, 255, 255, 0.2) !important;\n}\n\n.tb-dashboard-page.dark .tb-widget-container > .tb-widget .mat-mdc-select-value,\n.tb-dashboard-page.dark .tb-widget-container > .tb-widget .tb-table-widget .mat-mdc-paginator .mat-mdc-select-value {\n    color : rgba(255, 255, 255, 0.57) !important;\n}\n\n.tb-dashboard-page.dark .tb-widget-container > .tb-widget .mat-mdc-select-arrow {\n    color : rgba(255, 255, 255, 0.57);\n}\n\n.tb-dashboard-page.dark .tb-widget-container > .tb-widget .mdc-text-field--filled:not(.mdc-text-field--disabled) .mdc-line-ripple:before {\n    border-bottom-color: rgba(255, 255, 255, 0.4);\n}\n\n.tb-dashboard-page.dark .tb-widget-container > .tb-widget .mdc-text-field--outlined:not(.mdc-text-field--disabled) .mdc-notched-outline__leading, \n.tb-dashboard-page.dark .tb-widget-container > .tb-widget .mdc-text-field--outlined:not(.mdc-text-field--disabled) .mdc-notched-outline__notch,\n.tb-dashboard-page.dark .tb-widget-container > .tb-widget .mdc-text-field--outlined:not(.mdc-text-field--disabled) .mdc-notched-outline__trailing {\n    border-color: rgba(255, 255, 255, 0.4);\n}\n\n.tb-dashboard-page.dark .tb-markdown-view div,\n.tb-dashboard-page.dark .tb-markdown-view div.param,\n.tb-dashboard-page.dark .tb-markdown-view .header .title,\n.tb-dashboard-page.dark .tb-markdown-view p {\n    color : rgba(255, 255, 255, 0.87);\n}\n\n.tb-dashboard-page.dark .tb-markdown-view div.param-title,\n.tb-dashboard-page.dark .tb-markdown-view .header .subtitle {\n    color : rgba(255, 255, 255, 0.6);\n}\n\n.tb-dashboard-page.dark .tb-powered-by-footer {\n    color : rgba(255, 255, 255, 0.87) !important;\n}\n"
     }
   },
-  "name": "default_Dashboard"
+  "name": "Демонстрационный дешборд камеры"
 }

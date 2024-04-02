@@ -21,11 +21,11 @@ logging.basicConfig(level=logging.DEBUG,
                     datefmt='%Y-%m-%d %H:%M:%S')
 
 # ThingsBoard REST API URL
-url = "localhost"
+url = "localhost:8080"
 
 # Default Tenant Administrator credentials
 username = "sysadmin@thingsboard.org"
-password = "654321"
+password = "sysadmin"
 
 
 def check_credentials(api_func):
@@ -178,44 +178,35 @@ def init_dashboard(token, refresh_token):
             )
             device_profile = rest_client.save_device_profile(device_profile)
 
-            # logging.info(" Device profile was created:\n%r\n", device_profile)
-
             # Create and save devices
             devices = []
             for i in range(1, 4):
-                device_name = f"camera{i}"
+                device_name = f"Камера {i}"
                 device = Device(name=device_name, device_profile_id=device_profile.id)
                 device = rest_client.save_device(device)
                 devices.append(device)
 
-            # Save the list of device IDs to a text file
-            entity_list = [str(device.id.id) for device in devices]
-            print(entity_list)
+            coords = (
+                (51.156751, 71.430434),
+                (51.147074, 71.422338),
+                (51.156940, 71.411691),
+            )
+
+            for i in range(0, 3):
+                rest_client.telemetry_controller.save_device_attributes_using_post(
+                    device_id=devices[i].id.id,
+                    scope='SERVER_SCOPE',
+                    body={
+                        "latitude": coords[i][0],
+                        "longitude": coords[i][1],
+                        "place": devices[i].name
+                    }
+                )
 
             # Load existing dashboard configuration
-            config_file_path2 = os.path.join(basedir, 'default_dashboard.json')
+            config_file_path2 = os.path.join(basedir, 'demo_cameras_dashboard.json')
             with open(config_file_path2, 'r') as config_file:
                 dashboard_config = json.load(config_file)
-
-            # Get the existing entityList
-            existing_entity_list = dashboard_config["configuration"]["entityAliases"]["1b22ed84-17fd-7197-96f3-bd0778a3daa2"]["filter"]["entityList"]
-
-            if isinstance(existing_entity_list, list):
-                # If it's already a list, we can directly manipulate it
-                entity_list = [str(device.id.id) for device in devices]
-                existing_entity_list.extend(entity_list)
-            else:
-                # If it's a string, load it as JSON
-                existing_entity_list = json.loads(existing_entity_list)
-                # Add the newly created device IDs to the existing entityList
-                for device in devices:
-                    existing_entity_list.append(str(device.id.id))
-
-            # Convert the merged entityList back to JSON
-            merged_entity_list_json = json.dumps(existing_entity_list)
-
-            # Update the dashboard configuration with the merged entityList
-            dashboard_config["configuration"]["entityAliases"]["1b22ed84-17fd-7197-96f3-bd0778a3daa2"]["filter"]["entityList"] = merged_entity_list_json
 
             # Create a new dashboard object with the updated configuration
             dashboard = Dashboard(

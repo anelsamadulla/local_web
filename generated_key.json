@@ -1,6 +1,6 @@
 {
     "company": "Cuba IoT",
-    "created_at": 1708560000,
+    "created_at": 1712016000,
     "email": "tenant1@cuba.org",
     "issued_for": {
         "email": "admin@mail.com",
@@ -8,7 +8,7 @@
         "lname": "Surname",
         "phone": "77012223344"
     },
-    "jwt_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjcmVhdGVkX2F0IjoxNzA4NTYwMDAwLCJkZXZpY2VzIjoxMDAwLCJzZXJ2aWNlcyI6WzFdLCJleHBpcmVzX2F0IjoxNzY5OTI4MTI3LCJpc3N1ZWRfZm9yIjoiQ3ViYSBJb1QiLCJkZXZpY2VfaWQiOiI0YTY5MzcxZS1kMTY3LTExZWUtOWFhNy0wMjQyYWMxMzAwMDMifQ.zvxoNTXyB_lxgMnz7Xtyc27EFWQUq8yl3-0MqWii2DQ",
+    "jwt_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjcmVhdGVkX2F0IjoxNzEyMDE2MDAwLCJkZXZpY2VzIjoxMDAwLCJzZXJ2aWNlcyI6WzFdLCJleHBpcmVzX2F0IjoxNzY5OTI4MTI3LCJpc3N1ZWRfZm9yIjoiQ3ViYSBJb1QiLCJkZXZpY2VfaWQiOiJlZjA5NDNjYS1mMGE0LTExZWUtYmQ2Yi0wMjQyYWMxMjAwMDMifQ.N33JKA7QJ3Zcggjl7Uxgycob2gne0SMOmRzrrANoD50",
     "payment_status": "Completed",
     "phone": "77012345678",
     "status": 200

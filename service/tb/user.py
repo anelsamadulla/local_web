@@ -9,6 +9,18 @@ from exceptions import UserActivatedException
 import json
 import bcrypt
 import psycopg2
+from dotenv import load_dotenv
+import os
+
+
+load_dotenv('/usr/share/thingsboard/conf/thingsboard.conf')
+
+SPRING_DATASOURCE_URL = os.environ.get('SPRING_DATASOURCE_URL').split('/')
+DB_NAME = SPRING_DATASOURCE_URL[-1]
+DB_HOST = SPRING_DATASOURCE_URL[-2].split(':')[0]
+DB_PORT = SPRING_DATASOURCE_URL[-2].split(':')[1]
+DB_USER = os.environ.get('SPRING_DATASOURCE_USERNAME')
+DB_PASS = os.environ.get('SPRING_DATASOURCE_PASSWORD')
 
 
 @check_credentials
@@ -97,13 +109,12 @@ def update_password(new_password, admin_id):
             bcrypt.gensalt(10, b'2a')
         )
 
-        print('HASHED', hashed)
         conn = psycopg2.connect(
-            database="thingsboard",
-            user="postgres",
-            host="localhost",
-            password="postgres",
-            port=5432
+            database=DB_NAME,
+            user=DB_USER,
+            host=DB_HOST,
+            password=DB_PASS,
+            port=DB_PORT
         )
         cur = conn.cursor()
         cur.execute(
@@ -115,7 +126,7 @@ def update_password(new_password, admin_id):
         logging.exception(e)
 
     finally:
-        cur.close()
+        # cur.close()
         conn.close()
 
 
