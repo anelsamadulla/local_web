@@ -8,11 +8,14 @@ import json
 import jwt
 from tb_rest_client.rest_client_ce import (
     RestClientCE, TenantProfile, Tenant, User, DeviceProfile, Device, Dashboard,
-    DeviceProfileData
+    DeviceProfileData, TenantProfileId, TenantId
 )
 from tb_rest_client.rest import ApiException
 from exceptions import NoLicenseException, LicenseNotValidException, RestApiNotAvailableexception
 import requests  # noqa
+from database import db
+from models import TenantProfile as TenantProfileModel, Tenant as TenantModel
+from ast import literal_eval
 
 basedir = pathlib.Path(__file__).parent.parent.parent.resolve()
 
@@ -91,38 +94,91 @@ def init(data):
                 }
             )
 
-            tenant_profile = rest_client.save_tenant_profile(tenant_profile)
+            try:
+                tenant_profile = rest_client.save_tenant_profile(tenant_profile)
+            except ApiException as e:
+                error_body = literal_eval(e.body.decode("UTF-8"))
+                if error_body["errorCode"] == 31:
+                    tenant_profile_record = db.session.scalar(db.select(TenantProfileModel))
+                    tenant_profile = rest_client.get_tenant_profile_by_id(
+                        TenantProfileId(tenant_profile_record.id,
+                                        'TENANT_PROFILE'))
+                    tenant_profile.profile_data.configuration['maxDevices'] = data['protected_data']['devices']
+                    tenant_profile = rest_client.save_tenant_profile(tenant_profile)
+                else:
+                    logging.exception(f'Unhandled exception: {e}')
 
             if tenant_profile:
-                tenant = Tenant(
-                    title=data['company'],
-                    region=data.get('region', ''),
-                    tenant_profile_id=tenant_profile.id,
-                    country=data.get('country', ''),
-                    state=data.get('state', ''),
-                    city=data.get('city', ''),
-                    address=data.get('address', ''),
-                    zip=data.get('zip', ''),
-                    email=data.get('email', 'email@email.com')
-                )
+
+                # try:
+                tenant_record = db.session.scalar(db.select(TenantModel))
+                if tenant_record:
+
+                    tenant = rest_client.get_tenant_by_id(TenantId(tenant_record.id, 'TENANT'))
+                    if tenant.title != data.get('company'):
+                        tenant.title = data.get('company', tenant.title)
+                        tenant.region = data.get('region', tenant.region)
+                        tenant.country = data.get('country', tenant.country)
+                        tenant.state = data.get('state', tenant.state)
+                        tenant.city = data.get('city', tenant.city)
+                        tenant.address = data.get('address', tenant.address)
+                        tenant.zip = data.get('zip', tenant.zip)
+                        tenant.email = data.get('email', tenant.email)
+                else:
+                    tenant = Tenant(
+                        title=data['company'],
+                        region=data.get('region', ''),
+                        tenant_profile_id=tenant_profile.id,
+                        country=data.get('country', ''),
+                        state=data.get('state', ''),
+                        city=data.get('city', ''),
+                        address=data.get('address', ''),
+                        zip=data.get('zip', ''),
+                        email=data.get('email', '')
+                    )
+                # except ApiException as e:
+                #     error_body = literal_eval(e.body.decode("UTF-8"))
+                #     if error_body['errorCode'] == 32:
+                #         print('TENANT', tenant)
+                #         tenant = Tenant(
+                #             title=data['company'],
+                #             region=data.get('region', ''),
+                #             tenant_profile_id=tenant_profile.id,
+                #             country=data.get('country', ''),
+                #             state=data.get('state', ''),
+                #             city=data.get('city', ''),
+                #             address=data.get('address', ''),
+                #             zip=data.get('zip', ''),
+                #             email=data.get('email', '')
+                #         )
+                #     else:
+                #         logging.exception(f'Unhandled exception: {e}')
 
                 tenant = rest_client.save_tenant(tenant)
 
-                user = User(
-                    tenant_id=tenant.id,
-                    email=data['issued_for'].get('email', 'tenantAdmin@gmail.com'),
-                    authority='TENANT_ADMIN',
-                    first_name=data['issued_for']['fname'],
-                    last_name=data['issued_for']['lname'],
-                    phone=data['issued_for'].get('phone', '77777777777'),
-                )
+                try:
+                    user = User(
+                        tenant_id=tenant.id,
+                        email=data['issued_for']['email'],
+                        authority='TENANT_ADMIN',
+                        first_name=data['issued_for']['fname'],
+                        last_name=data['issued_for']['lname'],
+                        phone=data['issued_for']['phone'],
+                    )
 
-                user = rest_client.save_user(user, send_activation_mail=False)
+                    user = rest_client.save_user(user, send_activation_mail=False)
+                except ApiException as e:
+                    error_body = literal_eval(e.body.decode("UTF-8"))
+                    if error_body["errorCode"] == 31:
+                        # User already exists we don't have to do anything else
+                        return tenant_profile, tenant, None, None
+                    else:
+                        logging.exception(f'Unhandled exception: {e}')
 
                 admin_token = rest_client.get_user_token(user_id=user.id)
 
                 # Здесь возвращает {'refresh_token': , 'scope': , 'token': }
-                print(jwt.decode(admin_token.token, options={"verify_signature": False}))
+                # print(jwt.decode(admin_token.token, options={"verify_signature": False}))
 
                 admin_token.refresh_token
                 # rest_client.check_activate_token(user_token)

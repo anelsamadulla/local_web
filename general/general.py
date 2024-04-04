@@ -19,6 +19,7 @@ from models import TenantProfile, Tenant, TenantAdmin
 from database import db
 from exceptions import CubaBaseException, UserActivatedException
 from general.forms import tenant_form, tenant_admin_form, reset_password_form, add_tenant_admin
+from sqlalchemy.exc import IntegrityError
 
 basedir = pathlib.Path(__file__).parent.parent.resolve()
 
@@ -238,12 +239,19 @@ def loadkey():
             # Save models IDs after initialization
             tenant_profile_model = TenantProfile(id=tenant_profile.id.id)
             tenant_model = Tenant(id=tenant.id.id)
-            tenant_admin_model = TenantAdmin(id=tenant_admin.id.id)
-            print(token.token)
-            print(token.refresh_token)
-            init_dashboard(token.token, token.refresh_token)
-            db.session.add_all([tenant_profile_model, tenant_model, tenant_admin_model])
-            db.session.commit()
+            transaction = [tenant_profile_model, tenant_model]
+            if tenant_admin:
+                tenant_admin_model = TenantAdmin(id=tenant_admin.id.id)
+                transaction.append(tenant_admin_model)
+
+            if token:
+                init_dashboard(token.token, token.refresh_token)
+            db.session.add_all(transaction)
+            try:
+                db.session.commit()
+            except IntegrityError:
+                # Data already exists so we don't have to do anything
+                pass
 
         return redirect(url_for('general_bp.index', open_tab=True))
 
