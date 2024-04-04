@@ -8,13 +8,13 @@ import pathlib
 import jwt
 import logging
 from flask import Blueprint, redirect, render_template, request, url_for, abort, flash
-from service.tb import init, init_dashboard
-from service.tb.user import (
+from service.rest.tb import init, init_dashboard
+from service.rest.tb.user import (
     get_user_activation_link, update_user, update_password, create_tenant_admin, set_user_credentials_enabled,
     delete_user
 )
-from service.tb.tenant_profile import get_tenant_profile
-from service.tb.tenant import get_tenant, update_tenant, get_tenant_admins_by_tenant_id
+from service.rest.tb.tenant_profile import get_tenant_profile
+from service.rest.tb.tenant import get_tenant, update_tenant, get_tenant_admins_by_tenant_id
 from models import TenantProfile, Tenant, TenantAdmin
 from database import db
 from exceptions import CubaBaseException, UserActivatedException
