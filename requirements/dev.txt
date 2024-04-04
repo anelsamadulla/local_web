@@ -37,6 +37,8 @@ PyYAML==6.0.1
 referencing==0.33.0
 requests==2.31.0
 resolvelib==1.0.1
+pyarmor==8.5.2
+pyarmor.cli.core==6.5.0
 rpds-py==0.18.0
 six==1.16.0
 SQLAlchemy==2.0.27
